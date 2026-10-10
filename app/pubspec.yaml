@@ -1,0 +1,31 @@
+name: earth_risk_chain
+description: >-
+  EARTH RISK CHAIN frontend MVP - flood expansion and slope deformation
+  monitoring, risk analysis, exposure and a data-grounded Q&A demo.
+  Runs on clearly labelled SAMPLE data; ready for a FastAPI backend.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.22.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1   # state management + dependency injection
+  go_router: ^14.2.0         # declarative navigation, 5-branch shell
+  flutter_map: ^7.0.2        # interactive map (vector overlays, tile basemap)
+  latlong2: ^0.9.1           # LatLng type used by flutter_map
+  fl_chart: ^0.69.0          # bar / line charts
+  http: ^1.2.2               # HTTP client behind ApiClient (future backend)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/demo/

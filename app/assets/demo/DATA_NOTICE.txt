@@ -1,0 +1,8 @@
+EARTH RISK CHAIN - demo assets
+================================
+All numbers, dates, geometries and infrastructure counts shown by the app in
+mock mode are SAMPLE DATA defined in lib/data/mock/mock_data.dart.
+They are illustrative and are NOT satellite-derived measurements.
+This folder is intentionally almost empty; it is declared in pubspec.yaml so that
+future demo files (for example a GeoJSON sample) can be added without
+changing the build configuration.

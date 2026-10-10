@@ -1,0 +1,1301 @@
+diff -ruN a/README.md b/README.md
+--- a/README.md	2026-10-10 10:15:14.844406198 +0000
++++ b/README.md	2026-10-10 10:15:14.846860900 +0000
+@@ -52,6 +52,11 @@
+ | **Ask Earth** | Chat UI, suggested questions, history, loading/typing state, error and "not in the records" states, demo answers from local sample records. **Not an AI model**; no API key. |
+ | **About this data** | Explains sample data, statuses and the observed/derived/predicted/context separation (has a back button). |
+ 
++**Real data:** two extra regions, *Feni District (Aug 2024 flood)* and
++*Eastern Bangladesh (Aug 2024 floods)*, use verified historical records for the
++August 2024 floods (marked **REAL DATA**). Sources, values and what was
++deliberately left out: [`docs/real_data_aug2024.md`](docs/real_data_aug2024.md).
++
+ Sample regions: three flood areas (expansion with no prediction; expansion
+ then partial recession with a preliminary estimate; no data at all) and one
+ hill-slope area. Switch regions/hazards to see every state.
+diff -ruN a/docs/real_data_aug2024.md b/docs/real_data_aug2024.md
+--- a/docs/real_data_aug2024.md	1970-01-01 00:00:00.000000000 +0000
++++ b/docs/real_data_aug2024.md	2026-10-10 10:15:14.845740461 +0000
+@@ -0,0 +1,101 @@
++# Real data: August 2024 Bangladesh floods
++
++Two regions in the app use **real historical records** instead of sample data:
++**Feni District (Aug 2024 flood)** and **Eastern Bangladesh (Aug 2024 floods)**.
++They are marked **REAL DATA** (green) instead of **SAMPLE DATA** and have
++`isSample: false`. The values are compiled into
++`lib/data/mock/real_aug2024_data.dart`, so the app works fully offline and is
++reproducible during a demo. Nothing is fetched at run time.
++
++Values were read from the sources below on 10 Oct 2026. Where a source does
++not give a value, the field is `null` and the UI shows "Not available".
++
++## Datasets integrated
++
++### 1. Feni District flood inundation, Sentinel-1, 21 Aug 2024
++* Source: Uddin, K., Hossain, S., Bajracharya, B., Ahmed, B., Islam, M.K.
++  (2025). *Rapid Flood Inundation Mapping for Effective Management: A Machine
++  Learning and Pixel-Based Classification Approach in Feni District,
++  Bangladesh.* Journal of Flood Risk Management 18: e70087.
++  https://doi.org/10.1111/jfr3.70087 (Wiley; full text mirrored on Ovid)
++* Scenes: Sentinel-1 GRD `20240821T120417` and `20240821T120442`.
++
++| Value | Used as | Verification |
++|---|---|---|
++| 201 km2 inundated, Feni District, 21 Aug 2024 | observation `floodExtentKm2` | Stated in the paper abstract |
++| Sonagazi 49, Chhagalnaiya 37, Fulgazi 35, Feni Sadar 33 km2 | zone values | Stated in the paper text (pixel-based classification) |
++| Parshuram 31, Daganbhuiyan 16 km2 | zone values | Only in the Wikipedia summary of the paper; **checked: all six sum to 201** |
++| Sonagazi 60 km2 (random forest) | zone evidence text | Stated in the paper |
++| 27 km2 (Aug 2022), 17 km2 (Aug 2023) | quality-flag text only | Stated in the abstract; **month only, so not entered as dated observations** |
++
++### 2. UNOSAT satellite flood analysis FL20240825BGD
++* Source: UNOSAT (2024). *Satellite detected water extents between 28 August &
++  4 September 2024 in Bangladesh.* Humanitarian Data Exchange, CC BY-SA.
++  Read from the HDX metadata as mirrored at
++  https://geo.btaa.org/catalog/007de930-02e7-4b32-8a6c-774c86eb2c8f
++  (also listed on ReliefWeb, posted 10 Sep 2024).
++* Method: Sentinel-1 composites 18-26 Aug and 28 Aug-4 Sep 2024, automated
++  machine-learning analysis. "Preliminary analysis, not yet validated in the
++  field."
++
++| Value | Used as | Note |
++|---|---|---|
++| Floodwaters receded by about 8,700 km2 between the two periods | `ChangeStat.netChangeKm2 = -8700` | The two period totals are **not** given separately, so before/after areas and % change stay `null` |
++| About 8,100 km2 affected within ~140,000 km2 analysed | quality-flag text | Ambiguous which period it refers to, so not used as an observation value |
++| About 6.2 million people exposed or living close to flooded areas (WorldPop) | quality-flag text | The app has no population category |
++| Window end dates 26 Aug and 4 Sep 2024 | observation dates | Disclosed in the record: each date is the last day of a composite window |
++
++### 3. World Bank GRADE report, floods in eastern Bangladesh, Aug 2024
++* Source: World Bank (2024). *Global RApid Post-Disaster Damage Estimation
++  (GRADE) Report, report as of 7 Oct 2024.*
++  https://documents1.worldbank.org/curated/en/099921506192542727/pdf/IDU-3c0e1de6-9af6-40b9-99a3-78397d1041ac.pdf
++  District tables compile Bangladesh MoDMR / DDM reports (D-Form, 26 Sep 2024).
++
++| District | Affected population | Households cut off | Deaths | Damaged structures | Damaged roads (km) | Damaged educational institutes | GRADE direct damage |
++|---|---|---|---|---|---|---|---|
++| Noakhali | 2,125,500 (57%) | 439,415 | 11 | 154,892 | 5,545 | 1,107 | US$508.8 M |
++| Cumilla | 1,090,592 (17%) | 213,224 | 19 | 82,755 | 3,648 | 854 | US$362.6 M |
++| Feni | 1,000,000 (59%) | 250,000 | 28 | 64,415 | 1,871 | 598 | US$312.7 M |
++
++* Entered in the Impact screen as `buildings` / `roads` / `schools`. They are
++  **reported damage counts, not modelled exposure**; the record's disclaimer and
++  each card's note say so, and none is marked illustrative.
++* Agriculture: FAO DIEM satellite analysis cited by GRADE, flood extent about
++  three million ha by 3 Sep 2024, about two million ha of it cropland. Entered
++  as one region-wide zone ("All flooded areas"), `agriculture` = about
++  2,000,000 ha (approximate).
++* Event totals (over six million affected, 597,552 displaced, 74 deaths,
++  US$1.676 billion) are shown as quality-flag text.
++
++### Zone positions
++Zone map positions are administrative reference points, **not boundaries**:
++Wikipedia infobox coordinates for Feni District (23.000N 91.400E), the five
++upazilas that list one, Cumilla (23.27N 91.12E) and Noakhali (22.70N 91.10E);
++Daganbhuiyan uses the centre of its Banglapedia bounding box. No real zone is
++drawn on the map (no polygons are bundled), so these positions are only data.
++
++## Checked but NOT used
++* **NASA Disasters ARIA / OPERA DSWx-S1 water maps** list scenes of
++  **9 Aug 2024 and 21 Aug 2024** (pre-event 5 May 2024)
++  (https://maps.disasters.nasa.gov/ags03/rest/services/bangladesh_floods_202408/aria_opera_dswx/MapServer).
++  The service confirms the dates but publishes **no area statistics**, and the
++  sandbox could not query the raster. No water-area number for those scenes was
++  verified, so none is used. If your screenshots show such figures, send the
++  source link and they can be added.
++* **ICIMOD flood-inundation map sheets** (Feni and Cumilla, 21 and 24 Aug) on
++  Sentinel Asia are images with no area statistics.
++* Flood-extent polygons (UNOSAT geodatabase, ARIA rasters): not downloadable
++  from the authoring environment, so **no map overlays** are bundled for real
++  regions. Explore says so instead of showing invented shapes.
++
++## What is still mock
++All four original sample regions (Sylhet, Jamuna, Haor basin, Chattogram hills)
++and everything in them; all map overlays and infrastructure markers; every
++prediction, susceptibility, validation metric and model explanation; slope
++deformation. Real regions have **no** prediction or validation results
++(`not available` / `not evaluated`).
++
++## Updating or extending
++Edit `lib/data/mock/real_aug2024_data.dart`; the tests in
++`test/real_aug2024_data_test.dart` pin each number to this table. Do not add a
++value without a source line here.
+diff -ruN a/lib/data/mock/mock_ask_engine.dart b/lib/data/mock/mock_ask_engine.dart
+--- a/lib/data/mock/mock_ask_engine.dart	2026-10-10 10:15:14.843904684 +0000
++++ b/lib/data/mock/mock_ask_engine.dart	2026-10-10 10:15:14.846347487 +0000
+@@ -154,9 +154,12 @@
+     final pct = stat.percentChange == null
+         ? ''
+         : ' (${formatPercent(stat.percentChange, signed: true)})';
++    final range = (stat.areaBeforeKm2 != null && stat.areaAfterKm2 != null)
++        ? ' from ${formatKm2(stat.areaBeforeKm2)} to '
++            '${formatKm2(stat.areaAfterKm2)}'
++        : '';
+     final text = 'Between ${formatDate(first.date)} and ${formatDate(last.date)} '
+-        '($days days) the mapped flooded area $verb from '
+-        '${formatKm2(stat.areaBeforeKm2)} to ${formatKm2(stat.areaAfterKm2)}: '
++        '($days days) the mapped flooded area $verb$range: '
+         'a net change of ${formatKm2(net, signed: true)}$pct.\n\n'
+         'This is an observed change between two dates. It does not show that '
+         'flooding will keep spreading.';
+diff -ruN a/lib/data/mock/mock_data.dart b/lib/data/mock/mock_data.dart
+--- a/lib/data/mock/mock_data.dart	2026-10-10 10:15:14.843865679 +0000
++++ b/lib/data/mock/mock_data.dart	2026-10-10 10:15:14.846318495 +0000
+@@ -12,6 +12,7 @@
+ import '../../models/observation.dart';
+ import '../../models/study_area.dart';
+ import '../../models/validation_result.dart';
++import 'real_aug2024_data.dart';
+ 
+ /// Everything the backend would eventually return for one analysis.
+ class MockBundle {
+@@ -104,6 +105,8 @@
+       boundary: _rect(_hills, 4.6, 3.8),
+       isSample: true,
+     ),
++    // Real historical records (August 2024 floods), see real_aug2024_data.dart.
++    ...RealAug2024Data.areas,
+   ];
+ 
+   // ---------------------------------------------------------------------
+@@ -114,6 +117,8 @@
+     _flood002(),
+     _flood003(),
+     _slope001(),
++    // Real historical records (August 2024 floods), see real_aug2024_data.dart.
++    ...RealAug2024Data.bundles,
+   ];
+ 
+   static MockBundle? bundleFor(String analysisId) {
+diff -ruN a/lib/data/mock/real_aug2024_data.dart b/lib/data/mock/real_aug2024_data.dart
+--- a/lib/data/mock/real_aug2024_data.dart	1970-01-01 00:00:00.000000000 +0000
++++ b/lib/data/mock/real_aug2024_data.dart	2026-10-10 10:15:14.846364301 +0000
+@@ -0,0 +1,654 @@
++import 'package:latlong2/latlong.dart';
++
++import '../../models/analysis_result.dart';
++import '../../models/data_status.dart';
++import '../../models/explanation_result.dart';
++import '../../models/hazard_type.dart';
++import '../../models/hazard_zone.dart';
++import '../../models/impact_summary.dart';
++import '../../models/observation.dart';
++import '../../models/study_area.dart';
++import '../../models/validation_result.dart';
++import 'mock_data.dart' show MockBundle;
++
++/// REAL historical records for the August 2024 floods in Bangladesh, bundled
++/// in the app so it works offline. Everything here was taken from the sources
++/// listed below. Where a source does not provide a value, the field is `null`
++/// or absent: nothing is estimated, interpolated or invented.
++///
++/// Sources (details and verification notes: docs/real_data_aug2024.md)
++///  [S1] Uddin, Hossain, Bajracharya, Ahmed, Islam (2025). Rapid Flood
++///       Inundation Mapping for Effective Management ... Feni District,
++///       Bangladesh. J. Flood Risk Management 18: e70087.
++///       https://doi.org/10.1111/jfr3.70087  (Sentinel-1 GRD scenes
++///       20240821T120417 and 20240821T120442).
++///  [S2] UNOSAT (2024). Satellite detected water extents between 28 August &
++///       4 September 2024 in Bangladesh (code FL20240825BGD), via the
++///       Humanitarian Data Exchange, CC BY-SA.
++///  [S3] World Bank (2024). Global RApid post-disaster Damage Estimation
++///       (GRADE) Report: Floods in eastern Bangladesh, August 2024 (as of
++///       7 Oct 2024). https://documents1.worldbank.org/curated/en/
++///       099921506192542727/pdf/IDU-3c0e1de6-9af6-40b9-99a3-78397d1041ac.pdf
++///       (district tables compiled from MoDMR/DDM; cropland from FAO DIEM).
++///  [S4] Wikipedia / Banglapedia: administrative reference points used only
++///       as zone positions (not boundaries).
++///
++/// These records are NOT sample data (`isSample: false`). The map has no
++/// overlays for them because no verified flood-extent geometry is bundled.
++class RealAug2024Data {
++  const RealAug2024Data._();
++
++  static const String datasetLabel = 'REAL: August 2024 Bangladesh floods';
++
++  static const String feniAreaId = 'area_feni_aug2024';
++  static const String easternAreaId = 'area_eastern_bd_aug2024';
++  static const String feniAnalysisId = 'flood_real_feni_2024';
++  static const String easternAnalysisId = 'flood_real_eastern_bd_2024';
++
++  // ---------------------------------------------------------------------
++  // Study areas (map view centres only; no boundaries are bundled)
++  // ---------------------------------------------------------------------
++  static final List<StudyArea> areas = <StudyArea>[
++    StudyArea(
++      id: feniAreaId,
++      name: 'Feni District (Aug 2024 flood)',
++      region: 'Bangladesh',
++      // Feni District reference point (Wikipedia infobox: 23.000N 91.400E).
++      center: LatLng(23.000, 91.400),
++      zoom: 10,
++      supportedHazards: const <HazardType>[HazardType.floodExpansion],
++      description: 'Real Sentinel-1 flood inundation mapped on 21 Aug 2024, '
++          'with inundated area for each of the six upazilas.',
++      isSample: false,
++    ),
++    StudyArea(
++      id: easternAreaId,
++      name: 'Eastern Bangladesh (Aug 2024 floods)',
++      region: 'Bangladesh',
++      center: LatLng(23.000, 91.250),
++      zoom: 8.5,
++      supportedHazards: const <HazardType>[HazardType.floodExpansion],
++      description: 'Real UNOSAT satellite flood analysis and World Bank GRADE '
++          'district figures for the Noakhali, Cumilla and Feni floods.',
++      isSample: false,
++    ),
++  ];
++
++  static final List<MockBundle> bundles = <MockBundle>[
++    _feni(),
++    _eastern(),
++  ];
++
++  // ---------------------------------------------------------------------
++  // 1. Feni District - Sentinel-1, 21 August 2024  [S1]
++  // ---------------------------------------------------------------------
++  static MockBundle _feni() {
++    final observations = <Observation>[
++      Observation(
++        id: 'obs_0',
++        date: DateTime(2024, 8, 21),
++        label: 'S1 21 Aug',
++        sensor: 'Sentinel-1 GRD (20240821T120417, 20240821T120442)',
++        floodExtentKm2: 201.0,
++        qualityNote: 'Feni District total, pixel-based classification '
++            '(Uddin et al. 2025).',
++      ),
++    ];
++
++    final zones = <HazardZone>[
++      for (final u in _upazilas)
++        HazardZone(
++          id: u.id,
++          name: '${u.name} upazila',
++          hazard: HazardType.floodExpansion,
++          rank: u.rank,
++          basis: ZoneBasis.observed,
++          centroid: LatLng(u.lat, u.lng),
++          summary: 'Inundated area on 21 Aug 2024: '
++              '${u.km2.toStringAsFixed(0)} km\u00b2 (Sentinel-1).',
++          metricLabel: 'Inundated area on 21 Aug 2024 (km\u00b2)',
++          evidence: <String>[
++            '${u.km2.toStringAsFixed(0)} km\u00b2 inundated on 21 Aug 2024 '
++                '(Sentinel-1, pixel-based classification).',
++            'Feni District total on the same scene: 201 km\u00b2.',
++            if (u.rank == 1)
++              'The same study\'s random-forest classification gave 60 km\u00b2 '
++                  'for this upazila; the pixel-based value is shown.',
++          ],
++          valuesByObservation: <String, double>{'obs_0': u.km2},
++          dataQuality: u.quality,
++        ),
++    ];
++
++    final analysis = AnalysisResult(
++      id: feniAnalysisId,
++      hazard: HazardType.floodExpansion,
++      studyAreaId: feniAreaId,
++      title: 'Feni District - flood inundation, 21 Aug 2024',
++      status: DataStatus.available,
++      isSample: false,
++      datasetLabel: datasetLabel,
++      statusNote: 'Real historical figures only. No verified flood-extent '
++          'geometry is bundled, so this analysis has no map overlays.',
++      observations: observations,
++      prediction: const PredictionInfo(
++        status: DataStatus.notAvailable,
++        kind: PredictionKind.none,
++        label: 'Future flood expansion',
++        description: 'This record holds historical observations only. No '
++            'forecast or expansion model was produced.',
++        caveats: <String>[
++          'A mapped flood extent on one date does not predict later flooding.',
++        ],
++      ),
++      validationStatus: DataStatus.notEvaluated,
++      zones: zones,
++      dataSources: const <DataSourceRef>[
++        DataSourceRef(
++          label: 'Sentinel-1 flood inundation map, Feni District, 21 Aug 2024',
++          provider: 'Uddin et al. (2025), J. Flood Risk Management 18: e70087',
++          note: 'https://doi.org/10.1111/jfr3.70087',
++        ),
++        DataSourceRef(
++          label: 'Upazila reference points used as zone positions',
++          provider: 'Wikipedia / Banglapedia',
++          note: 'Administrative reference points, not boundaries.',
++        ),
++      ],
++      qualityFlags: const <QualityFlag>[
++        QualityFlag(
++          label: 'Single dated scene',
++          detail: 'Only the 21 Aug 2024 scene is entered as a dated '
++              'observation, so no change between dates is measured here.',
++        ),
++        QualityFlag(
++          label: 'Earlier Augusts (not entered)',
++          detail: 'The same study reports 27 km\u00b2 (August 2022) and '
++              '17 km\u00b2 (August 2023) for the district, but gives the month '
++              'only, so they are not entered as dated observations.',
++        ),
++        QualityFlag(
++          label: 'Method choice',
++          detail: 'Pixel-based and random-forest classification give '
++              'different totals (for example Sonagazi 49 vs 60 km\u00b2). '
++              'The pixel-based values are shown.',
++          level: QualityLevel.warning,
++        ),
++        QualityFlag(
++          label: 'Peak extent may be missed',
++          detail: 'The World Bank GRADE report notes that open satellite data '
++              'did not capture the full August 2024 flood extent because of '
++              'cloud cover and missing images in critical periods.',
++          level: QualityLevel.warning,
++        ),
++      ],
++      limitations: const <String>[
++        'Historical observation only; not a forecast.',
++        'No map geometry is bundled, so Explore shows no overlays here.',
++        'Zone positions are administrative reference points, not boundaries.',
++        'Parshuram (31 km\u00b2) and Daganbhuiyan (16 km\u00b2) values come '
++            'from a Wikipedia summary of the paper; the six values sum to the '
++            'paper\'s 201 km\u00b2 total.',
++      ],
++      processingVersion: 'published figures (not reprocessed)',
++    );
++
++    return MockBundle(
++      summary: AnalysisSummary(
++        id: feniAnalysisId,
++        hazard: HazardType.floodExpansion,
++        studyAreaId: feniAreaId,
++        title: analysis.title,
++        status: DataStatus.available,
++        isSample: false,
++        observationCount: 1,
++        latestObservationDate: DateTime(2024, 8, 21),
++        headlineLabel: 'Mapped flood extent, 21 Aug 2024',
++        headlineValue: 201.0,
++        headlineUnit: 'km\u00b2',
++      ),
++      analysis: analysis,
++      layers: const [],
++      validation: const ValidationResult(
++        analysisId: feniAnalysisId,
++        status: DataStatus.notEvaluated,
++        isSample: false,
++        notes: <String>[
++          'The study authors report their own accuracy assessment; those '
++              'metrics were not extracted or checked for this app.',
++          'No independent comparison was performed here.',
++        ],
++        limitations: <String>[
++          '"Not evaluated" is not a pass.',
++        ],
++      ),
++      explanation: const ExplanationResult(
++        analysisId: feniAnalysisId,
++        status: DataStatus.notAvailable,
++        isSample: false,
++        caveat: 'No model explanation: this record contains observed figures '
++            'only.',
++      ),
++      impact: const ImpactSummary(
++        analysisId: feniAnalysisId,
++        status: DataStatus.notAvailable,
++        isSample: false,
++      ),
++    );
++  }
++
++  /// Inundated area per upazila on 21 Aug 2024 [S1] and reference points [S4].
++  static const List<_Upazila> _upazilas = <_Upazila>[
++    _Upazila('sonagazi', 'Sonagazi', 1, 49, 22.8576, 91.3956,
++        'Value: Uddin et al. (2025). Position: Wikipedia reference point.'),
++    _Upazila('chhagalnaiya', 'Chhagalnaiya', 2, 37, 23.0367, 91.5200,
++        'Value: Uddin et al. (2025). Position: Wikipedia reference point.'),
++    _Upazila('fulgazi', 'Fulgazi', 3, 35, 23.133, 91.433,
++        'Value: Uddin et al. (2025). Position: Wikipedia reference point.'),
++    _Upazila('feni_sadar', 'Feni Sadar', 4, 33, 23.017, 91.3917,
++        'Value: Uddin et al. (2025). Position: Wikipedia reference point.'),
++    _Upazila('parshuram', 'Parshuram', 5, 31, 23.217, 91.4417,
++        'Value: Wikipedia summary of Uddin et al. (2025). Position: '
++            'Wikipedia reference point.'),
++    // Position = centre of the Banglapedia bounding box (22.88-23.07N,
++    // 91.25-91.37E).
++    _Upazila('daganbhuiyan', 'Daganbhuiyan', 6, 16, 22.975, 91.308,
++        'Value: Wikipedia summary of Uddin et al. (2025). Position: centre '
++            'of the Banglapedia bounding box.'),
++  ];
++
++  // ---------------------------------------------------------------------
++  // 2. Eastern Bangladesh - UNOSAT [S2] + World Bank GRADE [S3]
++  // ---------------------------------------------------------------------
++  static MockBundle _eastern() {
++    final observations = <Observation>[
++      Observation(
++        id: 'obs_0',
++        // End date of the UNOSAT composite window 18-26 Aug 2024.
++        date: DateTime(2024, 8, 26),
++        label: 'T0 18-26 Aug',
++        sensor: 'Sentinel-1 composite, 18-26 Aug 2024 (UNOSAT)',
++        qualityNote: 'Composite of scenes from 18-26 Aug; dated by its last '
++            'day. Period-specific flooded area is not stated by the source.',
++      ),
++      Observation(
++        id: 'obs_1',
++        // End date of the UNOSAT composite window 28 Aug - 4 Sep 2024.
++        date: DateTime(2024, 9, 4),
++        label: 'T1 28 Aug-4 Sep',
++        sensor: 'Sentinel-1 composite, 28 Aug-4 Sep 2024 (UNOSAT)',
++        qualityNote: 'Composite of scenes from 28 Aug-4 Sep; dated by its '
++            'last day. Period-specific flooded area is not stated by the '
++            'source.',
++      ),
++    ];
++
++    // Only the change reported by UNOSAT is entered. The two period totals
++    // are not given separately, so they stay null.
++    const changeStats = <ChangeStat>[
++      ChangeStat(
++        fromObservationId: 'obs_0',
++        toObservationId: 'obs_1',
++        netChangeKm2: -8700.0,
++      ),
++    ];
++
++    final zones = <HazardZone>[
++      for (final d in _districts)
++        HazardZone(
++          id: d.id,
++          name: d.name,
++          hazard: HazardType.floodExpansion,
++          rank: d.rank,
++          basis: ZoneBasis.observed,
++          centroid: LatLng(d.lat, d.lng),
++          summary: d.summary,
++          evidence: d.evidence,
++          dataQuality: d.id == _fao.id
++              ? 'Satellite-based FAO DIEM analysis, cited by the World Bank '
++                  'GRADE report (Oct 2024).'
++              : 'Government-reported figures (MoDMR / DDM) as cited by the '
++                  'World Bank GRADE report (Oct 2024).',
++        ),
++    ];
++
++    final analysis = AnalysisResult(
++      id: easternAnalysisId,
++      hazard: HazardType.floodExpansion,
++      studyAreaId: easternAreaId,
++      title: 'Eastern Bangladesh - August 2024 floods (UNOSAT + World Bank)',
++      status: DataStatus.preliminary,
++      isSample: false,
++      datasetLabel: datasetLabel,
++      statusNote: 'Real historical figures only. No verified flood-extent '
++          'geometry is bundled, so this analysis has no map overlays.',
++      observations: observations,
++      changeStats: changeStats,
++      prediction: const PredictionInfo(
++        status: DataStatus.notAvailable,
++        kind: PredictionKind.none,
++        label: 'Future flood expansion',
++        description: 'This record holds historical observations and reported '
++            'impacts only. No forecast or expansion model was produced.',
++        caveats: <String>[
++          'A decrease or increase between two dates does not predict what '
++              'happens next.',
++        ],
++      ),
++      validationStatus: DataStatus.notEvaluated,
++      zones: zones,
++      dataSources: const <DataSourceRef>[
++        DataSourceRef(
++          label: 'Satellite detected water extents between 28 August & '
++              '4 September 2024 in Bangladesh (FL20240825BGD)',
++          provider: 'UNOSAT via Humanitarian Data Exchange (CC BY-SA)',
++          note: 'Sentinel-1, automated machine-learning analysis; '
++              'preliminary, not validated in the field.',
++        ),
++        DataSourceRef(
++          label: 'GRADE Report: Floods in eastern Bangladesh, August 2024 '
++              '(as of 7 Oct 2024)',
++          provider: 'World Bank (GFDRR / D-RAS)',
++          note: 'District tables compiled from MoDMR / DDM reports; cropland '
++              'estimate from FAO DIEM.',
++        ),
++        DataSourceRef(
++          label: 'District reference points used as zone positions',
++          provider: 'Wikipedia',
++          note: 'Administrative reference points, not boundaries.',
++        ),
++      ],
++      qualityFlags: const <QualityFlag>[
++        QualityFlag(
++          label: 'UNOSAT aggregate, 18 Aug - 4 Sep 2024',
++          detail: 'Within the analysed area of about 140,000 km\u00b2, about '
++              '8,100 km\u00b2 of land appears affected by flood waters and '
++              'about 6.2 million people are exposed or living close to '
++              'flooded areas (WorldPop). Floodwaters receded by about '
++              '8,700 km\u00b2 between the two periods.',
++        ),
++        QualityFlag(
++          label: 'Event totals (World Bank GRADE)',
++          detail: 'Over six million people affected in 11 districts, '
++              '597,552 displaced, 74 deaths, estimated direct damage '
++              'US\$1.676 billion (about 0.38% of GDP).',
++        ),
++        QualityFlag(
++          label: 'Observation dates',
++          detail: 'Dates shown are the last days of the UNOSAT composite '
++              'windows (18-26 Aug and 28 Aug - 4 Sep). The period totals are '
++              'not given separately, so only the reported change is shown.',
++        ),
++        QualityFlag(
++          label: 'Radar limitation',
++          detail: 'UNOSAT warns that radar analysis may underestimate '
++              'standing water in built-up and densely vegetated areas. The '
++              'analysis is preliminary and not validated in the field.',
++          level: QualityLevel.warning,
++        ),
++        QualityFlag(
++          label: 'Reported, not mapped',
++          detail: 'District figures are government-reported damage counts '
++              'cited by the World Bank. They are not derived from the '
++              'satellite mask.',
++          level: QualityLevel.warning,
++        ),
++      ],
++      limitations: const <String>[
++        'Historical records only; no forecast or susceptibility was produced.',
++        'No map geometry is bundled, so Explore shows no overlays here.',
++        'UNOSAT totals cover about 140,000 km\u00b2 analysed nationally, not '
++            'only the three districts listed as zones.',
++        'The GRADE report gives two cropland figures (321,680 ha damaged in '
++            'its text, at least 259,366 ha in its conclusion).',
++        'Zone positions are Wikipedia district reference points, not '
++            'boundaries.',
++      ],
++      processingVersion: 'published figures (not reprocessed)',
++    );
++
++    return MockBundle(
++      summary: AnalysisSummary(
++        id: easternAnalysisId,
++        hazard: HazardType.floodExpansion,
++        studyAreaId: easternAreaId,
++        title: analysis.title,
++        status: DataStatus.preliminary,
++        isSample: false,
++        observationCount: 2,
++        latestObservationDate: DateTime(2024, 9, 4),
++        headlineLabel: 'Net mapped flood-extent change',
++        headlineValue: -8700.0,
++        headlineUnit: 'km\u00b2',
++      ),
++      analysis: analysis,
++      layers: const [],
++      validation: const ValidationResult(
++        analysisId: easternAnalysisId,
++        status: DataStatus.notEvaluated,
++        isSample: false,
++        notes: <String>[
++          'UNOSAT describes its analysis as preliminary and not yet validated '
++              'in the field.',
++          'No independent comparison was performed here.',
++        ],
++        limitations: <String>[
++          '"Not evaluated" is not a pass.',
++        ],
++      ),
++      explanation: const ExplanationResult(
++        analysisId: easternAnalysisId,
++        status: DataStatus.notAvailable,
++        isSample: false,
++        caveat: 'No model explanation: this record contains observed and '
++            'reported figures only.',
++      ),
++      impact: ImpactSummary(
++        analysisId: easternAnalysisId,
++        status: DataStatus.preliminary,
++        isSample: false,
++        disclaimer: 'These are reported damage counts from Bangladesh '
++            'authorities (as cited by the World Bank GRADE report) and a '
++            'satellite-based cropland estimate, not modelled exposure from a '
++            'flood footprint. They do not describe current danger.',
++        zoneImpacts: <ZoneImpact>[
++          for (final d in _districts)
++            ZoneImpact(
++              zoneId: d.id,
++              zoneName: d.name,
++              basis: ZoneBasis.observed,
++              exposures: _exposures(d),
++            ),
++        ],
++        dataNotes: const <ExposureDataNote>[
++          ExposureDataNote(
++            category: AssetCategory.buildings,
++            source: 'MoDMR D-Form compiled by the Needs Assessment Working '
++                'Group, cited in World Bank GRADE',
++            dataDate: '26 Sep 2024',
++            coverage: 'Reported damaged or destroyed structures in 8 of the '
++                '11 affected districts.',
++          ),
++          ExposureDataNote(
++            category: AssetCategory.roads,
++            source: 'MoDMR D-Form compiled by the Needs Assessment Working '
++                'Group, cited in World Bank GRADE',
++            dataDate: '26 Sep 2024',
++            coverage: 'Reported damaged road length in 8 of the 11 affected '
++                'districts.',
++          ),
++          ExposureDataNote(
++            category: AssetCategory.schools,
++            source: 'MoDMR D-Form compiled by the Needs Assessment Working '
++                'Group, cited in World Bank GRADE',
++            dataDate: '26 Sep 2024',
++            coverage: 'Reported damaged educational institutes (primary and '
++                'high schools, colleges, madrasas, community schools).',
++          ),
++          ExposureDataNote(
++            category: AssetCategory.agriculture,
++            source: 'FAO DIEM satellite analysis, cited in World Bank GRADE',
++            dataDate: '3 Sep 2024',
++            coverage: 'Whole flood extent; not broken down by district in '
++                'the report.',
++          ),
++          ExposureDataNote(
++            category: AssetCategory.communities,
++            source: 'Not available',
++            coverage: 'No community-level figures are bundled.',
++          ),
++        ],
++      ),
++    );
++  }
++
++  /// District zones [S3] (rank = GRADE estimated direct damage, high to low)
++  /// plus the whole-extent agricultural estimate [S3 / FAO DIEM].
++  static const List<_District> _districts = <_District>[
++    _District(
++      'noakhali', 'Noakhali district', 1, 22.70, 91.10,
++      houses: 154892, roadsKm: 5545, schools: 1107,
++      summary: 'Worst-affected district in the World Bank GRADE estimate '
++          '(about US\$508.8 million direct damage).',
++      evidence: <String>[
++        'Reported affected population: 2,125,500 (57% of the district); '
++            '439,415 households cut off.',
++        'Reported deaths: 11.',
++        'Reported damaged: 154,892 structures, 5,545 km of roads, 1,107 '
++            'educational institutes.',
++      ],
++    ),
++    _District(
++      'cumilla', 'Cumilla district', 2, 23.27, 91.12,
++      houses: 82755, roadsKm: 3648, schools: 854,
++      summary: 'Second-highest direct damage in the World Bank GRADE '
++          'estimate (about US\$362.6 million).',
++      evidence: <String>[
++        'Reported affected population: 1,090,592 (17% of the district); '
++            '213,224 households cut off.',
++        'Reported deaths: 19.',
++        'Reported damaged: 82,755 structures, 3,648 km of roads, 854 '
++            'educational institutes.',
++      ],
++    ),
++    _District(
++      'feni', 'Feni district', 3, 23.000, 91.400,
++      houses: 64415, roadsKm: 1871, schools: 598,
++      summary: 'Third-highest direct damage in the World Bank GRADE estimate '
++          '(about US\$312.7 million); highest death toll.',
++      evidence: <String>[
++        'Reported affected population: 1,000,000 (59% of the district); '
++            '250,000 households cut off.',
++        'Reported deaths: 28.',
++        'Reported damaged: 64,415 structures, 1,871 km of roads, 598 '
++            'educational institutes.',
++      ],
++    ),
++    _fao,
++  ];
++
++  /// Not a place: the whole satellite-mapped flood extent (FAO DIEM, ~3 Sep
++  /// 2024: about three million ha, of which about two million ha cropland).
++  static const _District _fao = _District(
++    'all_flooded_areas', 'All flooded areas (FAO DIEM, about 3 Sep 2024)', 4,
++    23.000, 91.250,
++    croplandHa: 2000000,
++    summary: 'Satellite-based FAO analysis cited by the World Bank: flood '
++        'extent of about three million ha by 3 Sep 2024, about two million '
++        'ha of it cropland. A region-wide estimate, not a single place.',
++    evidence: <String>[
++      'Flood extent: about three million ha by 3 Sep 2024.',
++      'About two million ha of the flooded area was cropland, with high '
++          'impact on aman rice production.',
++    ],
++  );
++
++  static List<ExposureCount> _exposures(_District d) {
++    ExposureCount count(AssetCategory c, double? v, {String? note}) =>
++        ExposureCount(
++          category: c,
++          value: v,
++          approximate: c == AssetCategory.agriculture,
++          isIllustrative: false,
++          note: note,
++        );
++    return <ExposureCount>[
++      count(
++        AssetCategory.buildings,
++        d.houses?.toDouble(),
++        note: d.houses == null
++            ? 'Not reported for this entry.'
++            : 'Reported damaged or destroyed structures (MoDMR), not '
++                'modelled exposure.',
++      ),
++      count(
++        AssetCategory.roads,
++        d.roadsKm?.toDouble(),
++        note: d.roadsKm == null
++            ? 'Not reported for this entry.'
++            : 'Reported damaged road length (MoDMR).',
++      ),
++      count(
++        AssetCategory.schools,
++        d.schools?.toDouble(),
++        note: d.schools == null
++            ? 'Not reported for this entry.'
++            : 'Reported damaged educational institutes (MoDMR), including '
++                'colleges and madrasas.',
++      ),
++      count(
++        AssetCategory.agriculture,
++        d.croplandHa?.toDouble(),
++        note: d.croplandHa == null
++            ? 'No district-level cropland figure in the cited report.'
++            : 'About two million ha of flooded cropland (FAO DIEM).',
++      ),
++      count(
++        AssetCategory.communities,
++        null,
++        note: 'Not reported in the cited sources.',
++      ),
++    ];
++  }
++}
++
++class _Upazila {
++  const _Upazila(this.id, this.name, this.rank, this.km2, this.lat, this.lng,
++      this.quality);
++
++  final String id;
++  final String name;
++  final int rank;
++  final double km2;
++  final double lat;
++  final double lng;
++  final String quality;
++}
++
++class _District {
++  const _District(
++    this.id,
++    this.name,
++    this.rank,
++    this.lat,
++    this.lng, {
++    this.houses,
++    this.roadsKm,
++    this.schools,
++    this.croplandHa,
++    required this.summary,
++    required this.evidence,
++  });
++
++  final String id;
++  final String name;
++  final int rank;
++  final double lat;
++  final double lng;
++  final int? houses;
++  final int? roadsKm;
++  final int? schools;
++  final int? croplandHa;
++  final String summary;
++  final List<String> evidence;
++}
+diff -ruN a/lib/features/about/about_screen.dart b/lib/features/about/about_screen.dart
+--- a/lib/features/about/about_screen.dart	2026-10-10 10:15:14.844331812 +0000
++++ b/lib/features/about/about_screen.dart	2026-10-10 10:15:14.846812993 +0000
+@@ -38,7 +38,10 @@
+                         'Numbers, dates, shapes and infrastructure counts are '
+                         'illustrative so the interface can be reviewed before '
+                         'the research pipeline delivers verified outputs. '
+-                        'They are not satellite-derived measurements.'
++                        'They are not satellite-derived measurements. Regions '
++                        'marked REAL DATA (August 2024 floods) use published '
++                        'historical records instead; their sources are listed '
++                        'under Data quality.'
+                     : 'This build is configured to use a backend '
+                         '(${AppConfig.apiBaseUrl.isEmpty ? 'URL not set' : AppConfig.apiBaseUrl}). '
+                         'Values shown come from that service.',
+diff -ruN a/lib/features/ask_earth/ask_earth_screen.dart b/lib/features/ask_earth/ask_earth_screen.dart
+--- a/lib/features/ask_earth/ask_earth_screen.dart	2026-10-10 10:15:14.844297770 +0000
++++ b/lib/features/ask_earth/ask_earth_screen.dart	2026-10-10 10:15:14.846791945 +0000
+@@ -130,10 +130,15 @@
+               ],
+             ),
+           ),
+-          const SampleDataBanner(
+-            message: 'Demo assistant: answers are composed from stored SAMPLE '
+-                'records by simple rules. It is not an AI model and cannot '
+-                'judge safety.',
++          SampleDataBanner(
++            message: (ref.watch(effectiveAreaProvider).valueOrNull?.isSample ??
++                    true)
++                ? 'Demo assistant: answers are composed from stored SAMPLE '
++                    'records by simple rules. It is not an AI model and '
++                    'cannot judge safety.'
++                : 'Demo assistant: answers are composed from the stored real '
++                    'historical records by simple rules. It is not an AI '
++                    'model and cannot judge safety.',
+           ),
+         ],
+       ),
+diff -ruN a/lib/features/common/data_origin_badge.dart b/lib/features/common/data_origin_badge.dart
+--- a/lib/features/common/data_origin_badge.dart	1970-01-01 00:00:00.000000000 +0000
++++ b/lib/features/common/data_origin_badge.dart	2026-10-10 10:15:14.846555515 +0000
+@@ -0,0 +1,27 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import '../../app/theme/app_colors.dart';
++import '../../core/widgets/badges.dart';
++import '../../state/providers.dart';
++
++/// Shows **SAMPLE DATA** for demonstration regions and **REAL DATA** for
++/// regions backed by real historical records, so the two are never confused.
++/// While the region is loading it falls back to the sample label.
++class DataOriginBadge extends ConsumerWidget {
++  const DataOriginBadge({super.key});
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final area = ref.watch(effectiveAreaProvider).valueOrNull;
++    if (area != null && !area.isSample) {
++      return const Tag(
++        label: 'REAL DATA',
++        color: AppColors.green400,
++        icon: Icons.verified_outlined,
++        semanticsLabel: 'Real historical data, not sample data',
++      );
++    }
++    return const SampleDataBadge();
++  }
++}
+diff -ruN a/lib/features/explore/explore_panels.dart b/lib/features/explore/explore_panels.dart
+--- a/lib/features/explore/explore_panels.dart	2026-10-10 10:15:14.844134387 +0000
++++ b/lib/features/explore/explore_panels.dart	2026-10-10 10:15:14.846656213 +0000
+@@ -239,7 +239,7 @@
+           if (zone.metricLabel != null) ...<Widget>[
+             const SizedBox(height: 8),
+             Text(
+-              '${zone.metricLabel}: ${formatMeasure(value, decimals: 1, signed: true, fallback: 'not available at this date')}',
++              '${zone.metricLabel}: ${formatMeasure(value, decimals: 1, signed: (zone.metricLabel ?? '').toLowerCase().contains('displacement'), fallback: 'not available at this date')}',
+               style: theme.textTheme.bodyMedium
+                   ?.copyWith(fontWeight: FontWeight.w600),
+             ),
+diff -ruN a/lib/features/explore/explore_screen.dart b/lib/features/explore/explore_screen.dart
+--- a/lib/features/explore/explore_screen.dart	2026-10-10 10:15:14.844151014 +0000
++++ b/lib/features/explore/explore_screen.dart	2026-10-10 10:15:14.846668484 +0000
+@@ -1,10 +1,10 @@
+ import 'package:flutter/material.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ 
+-import '../../core/widgets/badges.dart';
+ import '../../core/widgets/panels.dart';
+ import '../../state/providers.dart';
+ import '../common/analysis_gate.dart';
++import '../common/data_origin_badge.dart';
+ import '../common/scope_bar.dart';
+ import 'explore_map.dart';
+ import 'explore_panels.dart';
+@@ -22,7 +22,7 @@
+         actions: const <Widget>[
+           Padding(
+             padding: EdgeInsets.only(right: 12),
+-            child: Center(child: SampleDataBadge()),
++            child: Center(child: DataOriginBadge()),
+           ),
+         ],
+       ),
+diff -ruN a/lib/features/home/home_screen.dart b/lib/features/home/home_screen.dart
+--- a/lib/features/home/home_screen.dart	2026-10-10 10:15:14.844076699 +0000
++++ b/lib/features/home/home_screen.dart	2026-10-10 10:15:14.846574401 +0000
+@@ -15,6 +15,7 @@
+ import '../../models/study_area.dart';
+ import '../../state/providers.dart';
+ import '../common/area_picker.dart';
++import '../common/data_origin_badge.dart';
+ 
+ /// Screen 1 - Home / Earth Today.
+ class HomeScreen extends ConsumerWidget {
+@@ -91,7 +92,7 @@
+               Expanded(
+                 child: Text('Earth Today', style: theme.textTheme.displaySmall),
+               ),
+-              const SampleDataBadge(),
++              const DataOriginBadge(),
+             ],
+           ),
+           const SizedBox(height: 6),
+@@ -228,7 +229,11 @@
+                 label: s.headlineLabel ?? 'Observed change',
+                 value: hasValue
+                     ? formatMeasure(s.headlineValue,
+-                        unit: s.headlineUnit ?? '', signed: true)
++                        unit: s.headlineUnit ?? '',
++                        // A '+' only makes sense for a change, not an extent.
++                        signed: (s.headlineLabel ?? '')
++                            .toLowerCase()
++                            .contains('change'))
+                     : 'Not available',
+                 caption: hasValue
+                     ? 'Observed only - not a forecast. ${s.observationCount} observations.'
+@@ -460,14 +465,22 @@
+   }
+ }
+ 
+-class _Footer extends StatelessWidget {
++class _Footer extends ConsumerWidget {
+   const _Footer();
+ 
+   @override
+-  Widget build(BuildContext context) {
++  Widget build(BuildContext context, WidgetRef ref) {
++    final area = ref.watch(effectiveAreaProvider).valueOrNull;
++    final isReal = area != null && !area.isSample;
+     return Column(
+       children: <Widget>[
+-        const SampleDataBanner(),
++        SampleDataBanner(
++          message: isReal
++              ? 'REAL HISTORICAL DATA: published records for the August 2024 '
++                  'floods (sources under Data quality). Figures marked '
++                  'preliminary are not validated. Nothing here is live.'
++              : null,
++        ),
+         TextButton.icon(
+           onPressed: () => context.push(AppRoutes.about),
+           icon: const Icon(Icons.info_outline, size: 18),
+diff -ruN a/lib/features/impact/impact_screen.dart b/lib/features/impact/impact_screen.dart
+--- a/lib/features/impact/impact_screen.dart	2026-10-10 10:15:14.844238183 +0000
++++ b/lib/features/impact/impact_screen.dart	2026-10-10 10:15:14.846746130 +0000
+@@ -1,9 +1,9 @@
+ import 'package:flutter/material.dart';
+ 
+-import '../../core/widgets/badges.dart';
+ import '../../core/widgets/panels.dart';
+ import '../../models/analysis_result.dart';
+ import '../common/analysis_gate.dart';
++import '../common/data_origin_badge.dart';
+ import '../common/scope_bar.dart';
+ import 'impact_content.dart';
+ 
+@@ -19,7 +19,7 @@
+         actions: const <Widget>[
+           Padding(
+             padding: EdgeInsets.only(right: 12),
+-            child: Center(child: SampleDataBadge()),
++            child: Center(child: DataOriginBadge()),
+           ),
+         ],
+       ),
+diff -ruN a/lib/features/risk_analysis/risk_analysis_screen.dart b/lib/features/risk_analysis/risk_analysis_screen.dart
+--- a/lib/features/risk_analysis/risk_analysis_screen.dart	2026-10-10 10:15:14.844191619 +0000
++++ b/lib/features/risk_analysis/risk_analysis_screen.dart	2026-10-10 10:15:14.846690373 +0000
+@@ -1,10 +1,10 @@
+ import 'package:flutter/material.dart';
+ 
+-import '../../core/widgets/badges.dart';
+ import '../../core/widgets/panels.dart';
+ import '../../models/analysis_result.dart';
+ import '../../models/hazard_type.dart';
+ import '../common/analysis_gate.dart';
++import '../common/data_origin_badge.dart';
+ import '../common/scope_bar.dart';
+ import 'risk_sections.dart';
+ 
+@@ -20,7 +20,7 @@
+         actions: const <Widget>[
+           Padding(
+             padding: EdgeInsets.only(right: 12),
+-            child: Center(child: SampleDataBadge()),
++            child: Center(child: DataOriginBadge()),
+           ),
+         ],
+       ),
+diff -ruN a/test/mock_repository_test.dart b/test/mock_repository_test.dart
+--- a/test/mock_repository_test.dart	2026-10-10 10:15:14.843294490 +0000
++++ b/test/mock_repository_test.dart	2026-10-10 10:15:14.845816694 +0000
+@@ -14,16 +14,21 @@
+     final a = await repo.getAreas();
+     final b = await repo.getAreas();
+     expect(a.map((e) => e.id), b.map((e) => e.id));
+-    expect(a, hasLength(4));
+-    expect(a.every((e) => e.isSample), isTrue);
++    // 4 SAMPLE regions + 2 regions with REAL August 2024 records.
++    expect(a, hasLength(6));
++    expect(a.where((e) => e.isSample), hasLength(4));
++    expect(a.where((e) => !e.isSample).map((e) => e.id),
++        <String>['area_feni_aug2024', 'area_eastern_bd_aug2024']);
++    // The default (first) region is still a sample region.
++    expect(a.first.isSample, isTrue);
+   });
+ 
+   test('filters analyses by hazard', () async {
+     final floods = await repo.getAnalyses(hazard: HazardType.floodExpansion);
+     final slopes = await repo.getAnalyses(hazard: HazardType.slopeDeformation);
+-    expect(floods, hasLength(3));
++    expect(floods, hasLength(5));
+     expect(slopes, hasLength(1));
+-    expect((await repo.getAnalyses()), hasLength(4));
++    expect((await repo.getAnalyses()), hasLength(6));
+   });
+ 
+   test('unknown analysis id throws NotFoundException', () async {
+diff -ruN a/test/real_aug2024_data_test.dart b/test/real_aug2024_data_test.dart
+--- a/test/real_aug2024_data_test.dart	1970-01-01 00:00:00.000000000 +0000
++++ b/test/real_aug2024_data_test.dart	2026-10-10 10:15:14.845869458 +0000
+@@ -0,0 +1,153 @@
++import 'package:earth_risk_chain/data/mock/real_aug2024_data.dart';
++import 'package:earth_risk_chain/data/repositories/mock_analysis_repository.dart';
++import 'package:earth_risk_chain/models/chat_message.dart';
++import 'package:earth_risk_chain/models/data_status.dart';
++import 'package:earth_risk_chain/models/impact_summary.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++/// Pins the REAL August 2024 figures to the published sources
++/// (see docs/real_data_aug2024.md) and checks that nothing was invented.
++void main() {
++  final repo = MockAnalysisRepository(latency: Duration.zero);
++
++  group('Feni District (Uddin et al. 2025, Sentinel-1, 21 Aug 2024)', () {
++    test('district total and acquisition date', () async {
++      final a = await repo.getAnalysis(RealAug2024Data.feniAnalysisId);
++      expect(a.isSample, isFalse);
++      expect(a.observations, hasLength(1));
++      expect(a.observations.single.date, DateTime(2024, 8, 21));
++      expect(a.observations.single.floodExtentKm2, 201.0);
++      expect(a.observations.single.sensor, contains('20240821T120417'));
++    });
++
++    test('six upazila values match the paper and sum to the 201 km2 total',
++        () async {
++      final a = await repo.getAnalysis(RealAug2024Data.feniAnalysisId);
++      final byName = <String, double>{
++        for (final z in a.zones) z.name: z.valuesByObservation['obs_0']!,
++      };
++      expect(byName['Sonagazi upazila'], 49);
++      expect(byName['Chhagalnaiya upazila'], 37);
++      expect(byName['Fulgazi upazila'], 35);
++      expect(byName['Feni Sadar upazila'], 33);
++      expect(byName['Parshuram upazila'], 31);
++      expect(byName['Daganbhuiyan upazila'], 16);
++      final sum = byName.values.fold<double>(0, (s, v) => s + v);
++      expect(sum, a.observations.single.floodExtentKm2);
++    });
++
++    test('2022/2023 values are NOT entered as dated observations', () async {
++      final a = await repo.getAnalysis(RealAug2024Data.feniAnalysisId);
++      expect(a.observations.every((o) => o.date.year == 2024), isTrue);
++      expect(a.changeStats, isEmpty);
++      expect(a.qualityFlags.map((f) => f.detail).join(' '), contains('27 km'));
++    });
++
++    test('no fabricated geometry or exposure', () async {
++      expect(await repo.getLayers(RealAug2024Data.feniAnalysisId), isEmpty);
++      final impact = await repo.getImpact(RealAug2024Data.feniAnalysisId);
++      expect(impact.status, DataStatus.notAvailable);
++      expect(impact.zoneImpacts, isEmpty);
++    });
++  });
++
++  group('Eastern Bangladesh (UNOSAT FL20240825BGD + World Bank GRADE)', () {
++    test('only the reported change is entered; period totals stay null',
++        () async {
++      final a = await repo.getAnalysis(RealAug2024Data.easternAnalysisId);
++      expect(a.isSample, isFalse);
++      expect(a.status, DataStatus.preliminary);
++      expect(a.observations, hasLength(2));
++      expect(a.observations.every((o) => o.floodExtentKm2 == null), isTrue);
++      final stat = a.changeFor('obs_0', 'obs_1')!;
++      expect(stat.netChangeKm2, -8700.0);
++      expect(stat.areaBeforeKm2, isNull);
++      expect(stat.areaAfterKm2, isNull);
++      expect(stat.percentChange, isNull);
++      final text = a.qualityFlags.map((f) => f.detail).join(' ');
++      expect(text, contains('8,100'));
++      expect(text, contains('6.2 million'));
++    });
++
++    test('district figures match Tables 3 and 4 of the GRADE report', () async {
++      final impact = await repo.getImpact(RealAug2024Data.easternAnalysisId);
++      double? v(String zone, AssetCategory c) =>
++          impact.impactForZone(zone)!.exposureFor(c)!.value;
++      expect(v('noakhali', AssetCategory.buildings), 154892);
++      expect(v('noakhali', AssetCategory.roads), 5545);
++      expect(v('noakhali', AssetCategory.schools), 1107);
++      expect(v('cumilla', AssetCategory.buildings), 82755);
++      expect(v('cumilla', AssetCategory.roads), 3648);
++      expect(v('cumilla', AssetCategory.schools), 854);
++      expect(v('feni', AssetCategory.buildings), 64415);
++      expect(v('feni', AssetCategory.roads), 1871);
++      expect(v('feni', AssetCategory.schools), 598);
++      // Cropland per district is not in the source: stays null.
++      expect(v('noakhali', AssetCategory.agriculture), isNull);
++      expect(v('all_flooded_areas', AssetCategory.agriculture), 2000000);
++      // Nothing is labelled illustrative or approximate when it is a count.
++      for (final z in impact.zoneImpacts) {
++        for (final e in z.exposures) {
++          expect(e.isIllustrative, isFalse);
++        }
++      }
++      expect(impact.impactForZone('feni')!
++          .exposureFor(AssetCategory.buildings)!.approximate, isFalse);
++    });
++
++    test('zones are ranked by GRADE damage and carry the affected population',
++        () async {
++      final a = await repo.getAnalysis(RealAug2024Data.easternAnalysisId);
++      final ranked = a.zonesByRank.map((z) => z.id).toList();
++      expect(ranked.take(3), <String>['noakhali', 'cumilla', 'feni']);
++      expect(a.zoneById('noakhali')!.evidence.join(' '), contains('2,125,500'));
++      expect(a.zoneById('cumilla')!.evidence.join(' '), contains('1,090,592'));
++      expect(a.zoneById('feni')!.evidence.join(' '), contains('1,000,000'));
++    });
++
++    test('every real record cites sources and bundles no layers', () async {
++      for (final id in <String>[
++        RealAug2024Data.feniAnalysisId,
++        RealAug2024Data.easternAnalysisId,
++      ]) {
++        final a = await repo.getAnalysis(id);
++        expect(a.dataSources, isNotEmpty);
++        expect(a.limitations, isNotEmpty);
++        expect(await repo.getLayers(id), isEmpty);
++        expect(a.prediction.status, DataStatus.notAvailable);
++        expect(a.validationStatus, DataStatus.notEvaluated);
++      }
++    });
++  });
++
++  group('Ask Earth on real records', () {
++    test('change answer has no sample note and no "from Not available"',
++        () async {
++      final r = await repo.ask(const AskRequest(
++          question: 'What changed here?',
++          analysisId: RealAug2024Data.easternAnalysisId));
++      expect(r.status, AnswerStatus.answered);
++      expect(r.answer, contains('-8,700.0 km'));
++      expect(r.answer, isNot(contains('Not available')));
++      expect(r.answer, isNot(contains('SAMPLE')));
++    });
++
++    test('exposure answer quotes the reported figures and the disclaimer',
++        () async {
++      final r = await repo.ask(const AskRequest(
++          question: 'Which roads or schools may be exposed?',
++          analysisId: RealAug2024Data.easternAnalysisId,
++          selectedZoneId: 'noakhali'));
++      expect(r.answer, contains('5,545.0 km'));
++      expect(r.answer, contains('1,107 schools'));
++      expect(r.answer, contains('reported damage counts'));
++    });
++
++    test('single-scene Feni record says change cannot be measured', () async {
++      final r = await repo.ask(const AskRequest(
++          question: 'What changed here?',
++          analysisId: RealAug2024Data.feniAnalysisId));
++      expect(r.status, AnswerStatus.unavailable);
++    });
++  });
++}
+diff -ruN a/test/widget_test.dart b/test/widget_test.dart
+--- a/test/widget_test.dart	2026-10-10 10:15:14.843333783 +0000
++++ b/test/widget_test.dart	2026-10-10 10:15:14.845854570 +0000
+@@ -337,6 +337,75 @@
+     });
+   });
+ 
++  group('Real August 2024 data', () {
++    Future<void> pickArea(WidgetTester tester, String areaId) async {
++      await tester.tap(find.byKey(const Key('area-picker')));
++      await tester.pumpAndSettle();
++      await tester.tap(find.byKey(Key('area-$areaId')));
++      await tester.pumpAndSettle();
++    }
++
++    testWidgets('Home labels Feni as REAL and shows the real 201 km2 extent',
++        (tester) async {
++      await pumpApp(tester);
++      await pickArea(tester, 'area_feni_aug2024');
++      expect(find.text('REAL DATA'), findsWidgets);
++      expect(find.text('SAMPLE DATA'), findsNothing);
++      expect(find.text('Mapped flood extent, 21 Aug 2024'), findsOneWidget);
++      expect(find.text('201.0 km\u00b2'), findsOneWidget);
++      expect(find.textContaining('Sonagazi upazila'), findsWidgets);
++    });
++
++    testWidgets('Risk (Feni): one dated scene -> honest "not enough observations"',
++        (tester) async {
++      await pumpApp(tester, initialLocation: '/risk');
++      await pickArea(tester, 'area_feni_aug2024');
++      expect(find.text('REAL DATA'), findsWidgets);
++      expect(find.text('Not enough observations'), findsOneWidget);
++      expect(find.text('Earlier Augusts (not entered)'), findsOneWidget);
++    });
++
++    testWidgets('Risk (Eastern Bangladesh): reported UNOSAT change, null totals',
++        (tester) async {
++      await pumpApp(tester, initialLocation: '/risk');
++      await pickArea(tester, 'area_eastern_bd_aug2024');
++      expect(find.text('-8,700.0 km\u00b2'), findsOneWidget);
++      expect(find.text('Contraction of mapped flooding'), findsOneWidget);
++      // Period totals are not published, so they are shown as unavailable.
++      expect(find.text('Not available'), findsWidgets);
++      expect(find.textContaining('UNOSAT aggregate'), findsOneWidget);
++    });
++
++    testWidgets('Impact (Eastern Bangladesh): reported damage, not illustrative',
++        (tester) async {
++      await pumpApp(tester, initialLocation: '/impact');
++      await pickArea(tester, 'area_eastern_bd_aug2024');
++      expect(find.text('154,892'), findsOneWidget);
++      expect(find.textContaining('reported damage counts'), findsOneWidget);
++      expect(find.text('Illustrative'), findsNothing);
++      expect(find.text('SAMPLE DATA'), findsNothing);
++    });
++
++    testWidgets('Explore (Feni): no invented geometry, zone shows real value',
++        (tester) async {
++      await pumpApp(tester, initialLocation: '/explore');
++      await pickArea(tester, 'area_feni_aug2024');
++      expect(find.text('No overlays to show'), findsOneWidget);
++      final chip = find.byKey(const Key('zone-chip-sonagazi'));
++      await tester.scrollUntilVisible(chip, 200,
++          scrollable: find.byType(Scrollable).last);
++      await tester.tap(chip);
++      await tester.pumpAndSettle();
++      expect(find.textContaining('49.0'), findsWidgets);
++    });
++
++    testWidgets('Sample regions still show SAMPLE DATA', (tester) async {
++      await pumpApp(tester);
++      expect(find.text('SAMPLE DATA'), findsWidgets);
++      expect(find.text('REAL DATA'), findsNothing);
++    });
++  });
++
+   test('MockAnalysisRepository default latency is non-zero for visible loading', () {
+     expect(MockAnalysisRepository().latency, greaterThan(Duration.zero));
+   });

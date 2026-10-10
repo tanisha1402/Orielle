@@ -1,0 +1,19 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: false
+  errors:
+    # The sources were authored without analyzer access. The two const-style
+    # lints below are the noisiest and are purely cosmetic; they are relaxed
+    # so `flutter analyze` surfaces real problems first. To re-enable them:
+    #   1) delete the two "ignore" lines below
+    #   2) run `dart fix --apply`
+    prefer_const_constructors: ignore
+    prefer_const_literals_to_create_immutables: ignore
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    avoid_print: true
+    unawaited_futures: false
