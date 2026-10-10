@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌍 EARTH RISK CHAIN
+# 🌍 TerraLens
 
 ### From surface change to future risk
 
@@ -51,7 +51,7 @@ Floods and landslides threaten millions of people in Bangladesh and across South
 * **Exposure mistaken for damage.** Assets inside a hazard zone are not the same as assets that were destroyed.
 * **Missing data read as safety.** No satellite pass does not mean no flood.
 
-## 2. Our idea: the Earth Risk Chain
+## 2. Our idea: TerraLens
 
 One application, two hazard modules (**flood expansion** and **slope deformation / landslide monitoring**), built around a single, explicit chain of reasoning:
 
@@ -150,12 +150,12 @@ flowchart TD
 
 ## 8. Getting started
 
-The source code is on the **`YOUR-BRANCH-NAME`** branch (this `main` branch holds only this overview).
+The source code is on the **`tanisha-ba`** branch (this `main` branch holds only this overview).
 
 **Prerequisites:** Flutter SDK 3.22+ (Dart 3.4+), Git. For Web: Chrome. For Android: Android Studio and an emulator or device. Check with `flutter doctor`.
 
 ```bash
-git clone -b YOUR-BRANCH-NAME https://github.com/tanisha1402/Orielle.git
+git clone -b tanisha-b1 https://github.com/tanisha1402/Orielle.git
 cd Orielle/app                 # the folder containing pubspec.yaml
 flutter pub get
 flutter run -d chrome          # or: flutter run   (Android device/emulator)
