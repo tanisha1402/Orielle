@@ -10,6 +10,7 @@ export interface MissionTask {
   options: MissionOption[];
   xp: number;
   released: boolean;
+  unlocked: boolean;
   training_only: boolean;
 }
 
@@ -72,6 +73,10 @@ export interface JournalEntry {
   training_only: true;
 }
 
+export interface GamificationConfig {
+  development_reset_enabled: boolean;
+}
+
 const apiBaseUrl = (
   import.meta.env.VITE_TERRALENS_API_URL?.trim() || "http://127.0.0.1:8000"
 ).replace(/\/+$/, "");
@@ -112,11 +117,15 @@ export function getOrCreatePlayerId(): string {
   return playerId;
 }
 
-export async function fetchMissions(): Promise<Mission[]> {
+export async function fetchMissions(playerId: string): Promise<Mission[]> {
   const payload = await requestJson<{ missions: Mission[] }>(
-    "/api/gamification/missions",
+    `/api/gamification/missions?player_id=${encodeURIComponent(playerId)}`,
   );
   return payload.missions;
+}
+
+export function fetchGamificationConfig(): Promise<GamificationConfig> {
+  return requestJson("/api/gamification/config");
 }
 
 export function fetchPlayerProgress(
@@ -151,5 +160,16 @@ export function submitMissionAnswer(
         answer,
       }),
     },
+  );
+}
+
+export function resetPlayerProgress(playerId: string): Promise<{
+  reset: boolean;
+  training_only: true;
+  progress: PlayerProgress;
+}> {
+  return requestJson(
+    `/api/gamification/players/${encodeURIComponent(playerId)}/reset`,
+    { method: "POST" },
   );
 }

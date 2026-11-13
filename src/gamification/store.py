@@ -11,7 +11,7 @@ from typing import Iterator
 from uuid import UUID
 
 from .grading import Grade, grade_answer
-from .missions import LEVEL_1_MISSION, get_task
+from .missions import LEVEL_1_MISSION, get_task, list_missions
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -26,6 +26,10 @@ RANKS = (
 
 class SubmissionConflictError(ValueError):
     """Raised when an idempotency key is reused for another task."""
+
+
+class TaskLockedError(ValueError):
+    """Raised when a player submits a task before unlocking it."""
 
 
 def rank_for_xp(total_xp: int) -> dict[str, int | str | None]:
@@ -208,6 +212,26 @@ def submit_answer(
             connection.commit()
             return response
 
+        task = get_task(task_id)
+        if not task["released"]:
+            connection.rollback()
+            raise TaskLockedError("This challenge is coming soon.")
+
+        completed_rows = connection.execute(
+            "SELECT task_id FROM task_completions WHERE player_id = ?",
+            (player_id,),
+        ).fetchall()
+        completed_ids = {row["task_id"] for row in completed_rows}
+        mission = list_missions(completed_ids)[0]
+        unlocked_ids = {
+            item["id"] for item in mission["tasks"] if item["unlocked"]
+        }
+        if task_id not in unlocked_ids:
+            connection.rollback()
+            raise TaskLockedError(
+                "Complete the previous challenge before unlocking this one."
+            )
+
         completed = connection.execute(
             "SELECT 1 FROM task_completions WHERE player_id = ? AND task_id = ?",
             (player_id, task_id),
@@ -221,7 +245,6 @@ def submit_answer(
                 grade,
                 0,
                 total_xp,
-                duplicate_submission=True,
                 already_completed=True,
             )
             connection.commit()
@@ -299,3 +322,23 @@ def get_research_journal(player_id: str) -> dict[str, object]:
             )
         connection.commit()
     return {"player_id": player_id, "entries": entries}
+
+
+def reset_player_progress(player_id: str) -> dict[str, object]:
+    """Clear one player's training records without touching other data."""
+
+    player_id = _normalize_uuid(player_id)
+    with _database() as connection:
+        connection.execute("BEGIN IMMEDIATE")
+        _ensure_player(connection, player_id)
+        connection.execute(
+            "DELETE FROM submissions WHERE player_id = ?",
+            (player_id,),
+        )
+        connection.execute(
+            "DELETE FROM task_completions WHERE player_id = ?",
+            (player_id,),
+        )
+        payload = _progress_payload(connection, player_id)
+        connection.commit()
+        return payload

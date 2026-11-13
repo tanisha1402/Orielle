@@ -1,5 +1,6 @@
 import { ArrowLeft, BookOpen, CheckCircle2, CircleHelp } from "lucide-react";
 import type { JournalEntry } from "../gamification/api";
+import { sound } from "../utils/audio";
 
 interface ResearchJournalProps {
   entries: JournalEntry[];
@@ -9,7 +10,14 @@ interface ResearchJournalProps {
 export function ResearchJournal({ entries, onBack }: ResearchJournalProps) {
   return (
     <div className="game-page">
-      <button className="game-back-button" onClick={onBack}>
+      <button
+        className="game-back-button"
+        onClick={() => {
+          sound.playKeyClick();
+          onBack();
+        }}
+        type="button"
+      >
         <ArrowLeft aria-hidden="true" size={15} />
         Mission Control
       </button>

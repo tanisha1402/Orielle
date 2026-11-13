@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, Iterable
 
 
 LEVEL_1_MISSION: dict[str, Any] = {
@@ -50,7 +50,7 @@ LEVEL_1_MISSION: dict[str, Any] = {
                 {"id": "C", "label": "power × 10"},
             ],
             "xp": 100,
-            "released": False,
+            "released": True,
             "training_only": True,
         },
         {
@@ -66,7 +66,7 @@ LEVEL_1_MISSION: dict[str, Any] = {
                 {"id": "C", "label": "No observation because −18 dB is above −15 dB"},
             ],
             "xp": 100,
-            "released": False,
+            "released": True,
             "training_only": True,
         },
         {
@@ -88,17 +88,27 @@ LEVEL_1_MISSION: dict[str, Any] = {
                 {"id": "C", "label": "That the satellite measured rainfall"},
             ],
             "xp": 100,
-            "released": False,
+            "released": True,
             "training_only": True,
         },
     ],
 }
 
 
-def list_missions() -> list[dict[str, Any]]:
-    """Return client-safe mission content without grading keys."""
+def list_missions(
+    completed_task_ids: Iterable[str] = (),
+) -> list[dict[str, Any]]:
+    """Return client-safe mission content with player-specific unlock state."""
 
-    return [deepcopy(LEVEL_1_MISSION)]
+    completed = set(completed_task_ids)
+    mission = deepcopy(LEVEL_1_MISSION)
+    can_unlock_next = True
+    for task in mission["tasks"]:
+        task["unlocked"] = bool(task["released"] and can_unlock_next)
+        can_unlock_next = (
+            can_unlock_next and task["released"] and task["id"] in completed
+        )
+    return [mission]
 
 
 def get_task(task_id: str) -> dict[str, Any]:

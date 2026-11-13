@@ -1,9 +1,11 @@
 import { ArrowLeft, ArrowRight, Radio } from "lucide-react";
 import { useState } from "react";
 import type { MissionTask } from "../gamification/api";
+import { sound } from "../utils/audio";
 
 interface TaskRunnerProps {
   task: MissionTask;
+  replay: boolean;
   busy: boolean;
   onBack: () => void;
   onSubmit: (answer: string) => void;
@@ -11,6 +13,7 @@ interface TaskRunnerProps {
 
 export function TaskRunner({
   task,
+  replay,
   busy,
   onBack,
   onSubmit,
@@ -19,18 +22,28 @@ export function TaskRunner({
 
   return (
     <div className="game-page game-page--narrow">
-      <button className="game-back-button" disabled={busy} onClick={onBack}>
+      <button
+        className="game-back-button"
+        disabled={busy}
+        onClick={() => {
+          sound.playKeyClick();
+          onBack();
+        }}
+        type="button"
+      >
         <ArrowLeft aria-hidden="true" size={15} />
         Mission briefing
       </button>
       <section className="task-card">
         <div className="task-card-topline">
           <span>RADAR ROOKIE · TASK {task.id}</span>
-          <span>{task.xp} XP</span>
+          <span>{replay ? "REPLAY · NO XP" : `${task.xp} XP`}</span>
         </div>
         <div className="task-simulation-label">
           <Radio aria-hidden="true" size={14} />
-          SIMULATED TRAINING EXERCISE · NO REAL SAR DATA
+          {replay
+            ? "REPLAY MODE · NO ADDITIONAL XP OR JOURNAL ENTRY"
+            : "SIMULATED TRAINING EXERCISE · NO REAL SAR DATA"}
         </div>
         <h1>{task.title}</h1>
         <p className="task-prompt">{task.prompt}</p>
@@ -57,7 +70,11 @@ export function TaskRunner({
         <button
           className="game-button game-button--primary game-button--wide"
           disabled={!selected || busy}
-          onClick={() => onSubmit(selected)}
+          onClick={() => {
+            sound.playKeyClick();
+            onSubmit(selected);
+          }}
+          type="button"
         >
           {busy ? "Checking answer…" : "Submit answer"}
           {!busy && <ArrowRight aria-hidden="true" size={16} />}

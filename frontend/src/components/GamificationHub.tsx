@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import {
   fetchMissions,
+  fetchGamificationConfig,
   fetchPlayerProgress,
   fetchResearchJournal,
   getOrCreatePlayerId,
+  resetPlayerProgress,
   submitMissionAnswer,
   type AnswerResult,
   type JournalEntry,
@@ -16,6 +18,7 @@ import { MissionControl } from "./MissionControl";
 import { ResearchJournal } from "./ResearchJournal";
 import { Reveal } from "./Reveal";
 import { TaskRunner } from "./TaskRunner";
+import { playRankUp, sound } from "../utils/audio";
 
 type Screen = "control" | "briefing" | "task" | "reveal" | "journal";
 
@@ -26,6 +29,9 @@ export function GamificationHub() {
   const [journal, setJournal] = useState<JournalEntry[]>([]);
   const [selectedTask, setSelectedTask] = useState<MissionTask | null>(null);
   const [answerResult, setAnswerResult] = useState<AnswerResult | null>(null);
+  const [rankUp, setRankUp] = useState<string | null>(null);
+  const [developmentResetEnabled, setDevelopmentResetEnabled] = useState(false);
+  const [isReplay, setIsReplay] = useState(false);
   const [screen, setScreen] = useState<Screen>("control");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -39,10 +45,11 @@ export function GamificationHub() {
       setError(null);
       try {
         const id = getOrCreatePlayerId();
-        const [missionData, progressData, journalData] = await Promise.all([
-          fetchMissions(),
+        const [missionData, progressData, journalData, configData] = await Promise.all([
+          fetchMissions(id),
           fetchPlayerProgress(id),
           fetchResearchJournal(id),
+          fetchGamificationConfig(),
         ]);
         if (!active) {
           return;
@@ -51,6 +58,7 @@ export function GamificationHub() {
         setMissions(missionData);
         setProgress(progressData);
         setJournal(journalData);
+        setDevelopmentResetEnabled(configData.development_reset_enabled);
       } catch (loadError) {
         if (active) {
           setError(
@@ -72,12 +80,52 @@ export function GamificationHub() {
   const mission = missions[0];
 
   const refreshPlayerRecords = async (id: string) => {
-    const [updatedProgress, updatedJournal] = await Promise.all([
-      fetchPlayerProgress(id),
-      fetchResearchJournal(id),
-    ]);
+    const [updatedProgress, updatedJournal, updatedMissions] = await Promise.all(
+      [
+        fetchPlayerProgress(id),
+        fetchResearchJournal(id),
+        fetchMissions(id),
+      ],
+    );
     setProgress(updatedProgress);
     setJournal(updatedJournal);
+    setMissions(updatedMissions);
+    return updatedProgress;
+  };
+
+  const selectTask = (task: MissionTask, replay: boolean) => {
+    setSelectedTask(task);
+    setIsReplay(replay);
+    setScreen("briefing");
+  };
+
+  const handleDevelopmentReset = async () => {
+    if (!playerId || !developmentResetEnabled) {
+      return;
+    }
+    const confirmed = window.confirm(
+      "Reset this player's training XP, challenge progress, and journal? This does not touch SAR data or analysis outputs.",
+    );
+    if (!confirmed) {
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    try {
+      await resetPlayerProgress(playerId);
+      setSelectedTask(null);
+      setAnswerResult(null);
+      setRankUp(null);
+      setIsReplay(false);
+      await refreshPlayerRecords(playerId);
+      setScreen("control");
+    } catch (resetError) {
+      setError(
+        `Training progress could not be reset: ${resetError instanceof Error ? resetError.message : "unknown error"}`,
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleAnswer = async (answer: string) => {
@@ -93,9 +141,41 @@ export function GamificationHub() {
         answer,
       );
       setAnswerResult(result);
+      setRankUp(
+        result.xp_awarded > 0 &&
+          progress &&
+          progress.rank.name !== result.rank.name
+          ? result.rank.name
+          : null,
+      );
       setScreen("reveal");
+      if (result.correct) {
+        sound.playSuccessChime();
+        if (
+          result.xp_awarded > 0 &&
+          progress &&
+          progress.rank.name !== result.rank.name
+        ) {
+          window.setTimeout(playRankUp, 350);
+        }
+      } else if (!result.correct) {
+        sound.playRadarPing();
+      }
       try {
-        await refreshPlayerRecords(playerId);
+        const updatedProgress = await refreshPlayerRecords(playerId);
+        const previousMission = progress?.missions.find(
+          (item) => item.mission_id === mission?.id,
+        );
+        const updatedMission = updatedProgress.missions.find(
+          (item) => item.mission_id === mission?.id,
+        );
+        if (
+          !previousMission?.completed &&
+          updatedMission?.completed &&
+          result.xp_awarded > 0
+        ) {
+          window.setTimeout(() => sound.playTrophyFanfare(), 850);
+        }
       } catch (refreshError) {
         setError(
           `Answer saved, but player records could not be refreshed: ${refreshError instanceof Error ? refreshError.message : "unknown error"}`,
@@ -143,23 +223,22 @@ export function GamificationHub() {
       )}
       {screen === "control" && (
         <MissionControl
+          developmentResetEnabled={developmentResetEnabled}
           mission={mission}
           progress={progress}
-          onBriefing={() => setScreen("briefing")}
+          onReset={() => void handleDevelopmentReset()}
+          onSelectTask={selectTask}
           onJournal={() => setScreen("journal")}
         />
       )}
       {screen === "briefing" && (
         <MissionBriefing
           mission={mission}
+          replay={isReplay}
+          task={selectedTask ?? mission.tasks[0]}
           onBack={() => setScreen("control")}
           onBegin={() => {
-            const task = mission.tasks.find(
-              (item) =>
-                item.released && !progress.completed_task_ids.includes(item.id),
-            );
-            if (task) {
-              setSelectedTask(task);
+            if (selectedTask?.released && selectedTask.unlocked) {
               setScreen("task");
             }
           }}
@@ -168,6 +247,7 @@ export function GamificationHub() {
       {screen === "task" && selectedTask && (
         <TaskRunner
           task={selectedTask}
+          replay={isReplay}
           busy={submitting}
           onBack={() => setScreen("briefing")}
           onSubmit={(answer) => void handleAnswer(answer)}
@@ -186,9 +266,12 @@ export function GamificationHub() {
             }
             message={answerResult.explanation}
             xpAwarded={answerResult.xp_awarded}
+            rankUp={rankUp}
+            alreadyCompleted={answerResult.already_completed}
             onContinue={() => {
               setAnswerResult(null);
               setSelectedTask(null);
+              setRankUp(null);
               setScreen("control");
             }}
           >

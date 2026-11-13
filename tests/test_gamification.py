@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -20,9 +21,11 @@ from src.gamification.grading import (
 from src.gamification.missions import list_missions
 from src.gamification.store import (
     SubmissionConflictError,
+    TaskLockedError,
     get_player_progress,
     get_research_journal,
     rank_for_xp,
+    reset_player_progress,
     submit_answer,
 )
 
@@ -52,6 +55,9 @@ class GamificationTests(unittest.TestCase):
             "1.1", "1.2", "1.3", "1.4"
         ])
         self.assertTrue(all(task["training_only"] for task in mission["tasks"]))
+        self.assertTrue(all(task["released"] for task in mission["tasks"]))
+        self.assertTrue(mission["tasks"][0]["unlocked"])
+        self.assertFalse(mission["tasks"][1]["unlocked"])
 
         payload = json.dumps(missions)
         self.assertNotIn("correct_answer", payload)
@@ -95,7 +101,21 @@ class GamificationTests(unittest.TestCase):
             "A",
         )
         self.assertTrue(second_submission["already_completed"])
+        self.assertFalse(second_submission["duplicate_submission"])
         self.assertEqual(second_submission["xp_awarded"], 0)
+        self.assertTrue(second_submission["correct"])
+
+        replay_wrong_answer = submit_answer(
+            self.player_id,
+            str(uuid4()),
+            "1.1",
+            "B",
+        )
+        self.assertTrue(replay_wrong_answer["already_completed"])
+        self.assertFalse(replay_wrong_answer["duplicate_submission"])
+        self.assertFalse(replay_wrong_answer["correct"])
+        self.assertEqual(replay_wrong_answer["correct_answer"], "A")
+        self.assertEqual(replay_wrong_answer["xp_awarded"], 0)
 
         progress = get_player_progress(self.player_id)
         self.assertEqual(progress["total_xp"], 100)
@@ -129,9 +149,112 @@ class GamificationTests(unittest.TestCase):
 
     def test_submission_id_cannot_be_reused_for_another_task(self):
         submission_id = str(uuid4())
-        submit_answer(self.player_id, submission_id, "1.1", "B")
+        submit_answer(self.player_id, submission_id, "1.1", "A")
         with self.assertRaises(SubmissionConflictError):
             submit_answer(self.player_id, submission_id, "1.2", "B")
+
+    def test_challenges_unlock_sequentially_and_locked_tasks_are_rejected(self):
+        initial = list_missions()[0]["tasks"]
+        self.assertEqual(
+            [task["id"] for task in initial if task["unlocked"]],
+            ["1.1"],
+        )
+        with self.assertRaises(TaskLockedError):
+            submit_answer(self.player_id, str(uuid4()), "1.2", "B")
+
+        for task_id, answer in (("1.1", "A"), ("1.2", "B")):
+            submit_answer(self.player_id, str(uuid4()), task_id, answer)
+            completed = get_player_progress(self.player_id)["completed_task_ids"]
+            unlocked = [
+                task["id"]
+                for task in list_missions(completed)[0]["tasks"]
+                if task["unlocked"]
+            ]
+            expected = ["1.1", "1.2"] if task_id == "1.1" else ["1.1", "1.2", "1.3"]
+            self.assertEqual(unlocked, expected)
+
+    def test_reset_is_scoped_to_training_database_and_preserves_sar_output(self):
+        other_player_id = str(uuid4())
+        submit_answer(self.player_id, str(uuid4()), "1.1", "A")
+        submit_answer(other_player_id, str(uuid4()), "1.1", "A")
+
+        sar_outputs = Path(self.temporary.name) / "outputs"
+        sar_outputs.mkdir()
+        sentinel_output = sar_outputs / "new_water.tif"
+        sentinel_output.write_bytes(b"synthetic test sentinel; not real SAR")
+
+        progress = reset_player_progress(self.player_id)
+        self.assertEqual(progress["total_xp"], 0)
+        self.assertEqual(progress["completed_task_ids"], [])
+        self.assertEqual(get_research_journal(self.player_id)["entries"], [])
+        self.assertEqual(get_player_progress(other_player_id)["total_xp"], 100)
+        self.assertEqual(
+            sentinel_output.read_bytes(),
+            b"synthetic test sentinel; not real SAR",
+        )
+
+    def test_api_missions_reflect_player_unlock_progression(self):
+        initial = self._request(
+            "GET",
+            f"/api/gamification/missions?player_id={self.player_id}",
+        ).json()["missions"][0]["tasks"]
+        self.assertEqual(
+            [task["id"] for task in initial if task["unlocked"]],
+            ["1.1"],
+        )
+        submit_answer(self.player_id, str(uuid4()), "1.1", "A")
+        updated = self._request(
+            "GET",
+            f"/api/gamification/missions?player_id={self.player_id}",
+        ).json()["missions"][0]["tasks"]
+        self.assertEqual(
+            [task["id"] for task in updated if task["unlocked"]],
+            ["1.1", "1.2"],
+        )
+
+    def test_reset_api_is_development_only_and_explicitly_enabled(self):
+        submit_answer(self.player_id, str(uuid4()), "1.1", "A")
+        reset_url = f"/api/gamification/players/{self.player_id}/reset"
+
+        with patch.dict(
+            os.environ,
+            {
+                "TERRALENS_ENV": "production",
+                "TERRALENS_ENABLE_GAMIFICATION_RESET": "true",
+            },
+        ):
+            denied = self._request("POST", reset_url)
+            self.assertEqual(denied.status_code, 404)
+            self.assertEqual(
+                self._request(
+                    "GET",
+                    f"/api/gamification/players/{self.player_id}/progress",
+                ).json()["total_xp"],
+                100,
+            )
+
+        with patch.dict(
+            os.environ,
+            {
+                "TERRALENS_ENV": "development",
+                "TERRALENS_ENABLE_GAMIFICATION_RESET": "true",
+            },
+        ):
+            self.assertEqual(
+                self._request("GET", "/api/gamification/config").json(),
+                {"development_reset_enabled": True},
+            )
+            reset = self._request("POST", reset_url)
+            self.assertEqual(reset.status_code, 200)
+            self.assertTrue(reset.json()["training_only"])
+            self.assertEqual(reset.json()["progress"]["total_xp"], 0)
+            self.assertEqual(
+                self._request(
+                    "GET",
+                    f"/api/gamification/players/{self.player_id}/journal",
+                ).json()["entries"],
+                [],
+            )
 
     def test_api_exposes_missions_answers_progress_and_journal(self):
         missions = self._request("GET", "/api/gamification/missions")
@@ -174,6 +297,17 @@ class GamificationTests(unittest.TestCase):
         )
         self.assertEqual(journal.status_code, 200)
         self.assertEqual(len(journal.json()["entries"]), 1)
+
+        locked = self._request(
+            "POST",
+            f"/api/gamification/players/{self.player_id}/answers",
+            json={
+                "submission_id": str(uuid4()),
+                "task_id": "1.3",
+                "answer": "A",
+            },
+        )
+        self.assertEqual(locked.status_code, 409)
 
     def test_api_rejects_unknown_tasks_and_invalid_player_ids(self):
         unknown_task = self._request(

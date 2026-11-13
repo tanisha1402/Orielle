@@ -10,9 +10,12 @@ import {
 } from "lucide-react";
 import { MapView } from "./components/MapView";
 import { GamificationHub } from "./components/GamificationHub";
+import { CosmicBackground } from "./components/CosmicBackground";
 import { EvidencePanel } from "./components/EvidencePanel";
 import { MethodologyPanel } from "./components/MethodologyPanel";
 import { ObservationCard } from "./components/ObservationCard";
+import { SoundToggle } from "./components/SoundToggle";
+import { WelcomeScreen } from "./components/WelcomeScreen";
 import { parseChangeSummary, type ChangeSummary } from "./data/analysis";
 import {
   LOCAL_INTEGRATION,
@@ -25,16 +28,25 @@ import {
   parseScenePairMetadata,
   type ScenePairMetadata,
 } from "./data/mission";
+import {
+  readSoundPreference,
+  sound,
+} from "./utils/audio";
 
 export default function App() {
-  const [activeWorkspace, setActiveWorkspace] = useState<"dashboard" | "training">(
-    "dashboard",
-  );
+  const [activeWorkspace, setActiveWorkspace] = useState<
+    "welcome" | "dashboard" | "training"
+  >("welcome");
   const [scenePair, setScenePair] =
     useState<ScenePairMetadata>(INITIAL_SCENE_PAIR);
   const [analysis, setAnalysis] = useState<ChangeSummary | null>(null);
   const [integrationError, setIntegrationError] = useState<string | null>(null);
   const [dataStatus, setDataStatus] = useState<ApiDataStatus>("checking");
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const enabled = readSoundPreference();
+    sound.enabled = enabled;
+    return enabled;
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -111,8 +123,27 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <CosmicBackground />
+      {activeWorkspace === "welcome" ? (
+        <WelcomeScreen
+          soundEnabled={soundEnabled}
+          onSoundChange={setSoundEnabled}
+          onLaunchMission={() => setActiveWorkspace("training")}
+          onExploreDashboard={() => setActiveWorkspace("dashboard")}
+        />
+      ) : (
+        <>
       <header className="topbar">
-        <a aria-label="TERRALENS home" className="brand" href="#top">
+        <a
+          aria-label="TERRALENS home"
+          className="brand"
+          href="#welcome"
+          onClick={(event) => {
+            event.preventDefault();
+            sound.playKeyClick();
+            setActiveWorkspace("welcome");
+          }}
+        >
           <span className="brand-mark">
             <Satellite aria-hidden="true" size={21} strokeWidth={1.8} />
           </span>
@@ -128,18 +159,25 @@ export default function App() {
           <button
             aria-current={activeWorkspace === "dashboard" ? "page" : undefined}
             className={activeWorkspace === "dashboard" ? "active" : ""}
-            onClick={() => setActiveWorkspace("dashboard")}
+            onClick={() => {
+              sound.playKeyClick();
+              setActiveWorkspace("dashboard");
+            }}
           >
             SAR Dashboard
           </button>
           <button
             aria-current={activeWorkspace === "training" ? "page" : undefined}
             className={activeWorkspace === "training" ? "active" : ""}
-            onClick={() => setActiveWorkspace("training")}
+            onClick={() => {
+              sound.playKeyClick();
+              setActiveWorkspace("training");
+            }}
           >
             Mission Control
           </button>
         </nav>
+        <SoundToggle enabled={soundEnabled} onChange={setSoundEnabled} />
         <div className="topbar-status">
           <span className="status-pulse" />
           <span>MISSION WORKSPACE</span>
@@ -219,8 +257,8 @@ export default function App() {
             />
             <p className="map-caption">
               <Waves aria-hidden="true" size={14} />
-              Drag the divider to compare dates. Raster layers appear when a
-              local tile service is configured.
+              Drag the divider to compare the two observations. The overlay
+              appears when local SAR outputs are available.
             </p>
             <EvidencePanel
               analysis={analysis}
@@ -249,6 +287,8 @@ export default function App() {
           </>
         )}
       </main>
+        </>
+      )}
     </div>
   );
 }

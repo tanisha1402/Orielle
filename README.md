@@ -243,21 +243,30 @@ basemap attribution.
 ### Radar Rookie training
 
 The existing dashboard includes a Mission Control training area. Level 1,
-**Radar Rookie**, defines four short exercises; task 1.1, **How Radar Sees**,
-is currently playable in the frontend. The other tasks are listed as coming
-next. Mission prompts use simulated examples and are explicitly labeled as
-training—not as measurements, flood findings, or NISAR observations. The
-existing SAR map, methods panel, and uncertainty disclosures remain separate.
+**Radar Rookie**, has four implemented exercises. Task 1.1 is initially
+available; the remaining exercises unlock in sequence as the player completes
+the preceding task. Completed exercises can be replayed for answer feedback,
+but a replay cannot award XP or create another journal entry. Mission prompts
+use simulated examples and are explicitly labeled as training—not as
+measurements, flood findings, or NISAR observations. The existing SAR map,
+methods panel, and uncertainty disclosures remain separate.
 
 The current FastAPI service exposes:
 
-- `GET /api/gamification/missions` — public mission content without answer keys.
+- `GET /api/gamification/missions` — public mission content without answer
+  keys. Add `?player_id=<uuid>` for that player's unlock state.
+- `GET /api/gamification/config` — exposes whether the local development reset
+  control is enabled.
 - `POST /api/gamification/players/{player_id}/answers` — grades a submitted
-  choice and awards XP once per completed task.
+  choice and awards XP once per completed task; completed-task replays return
+  feedback but do not grant rewards again.
 - `GET /api/gamification/players/{player_id}/progress` — returns XP, rank, and
   mission completion.
 - `GET /api/gamification/players/{player_id}/journal` — returns the player's
   training submissions and explanations.
+- `POST /api/gamification/players/{player_id}/reset` — deletes only that
+  player's training progress, and returns 404 unless both development reset
+  environment variables are enabled.
 
 The browser creates an anonymous UUID stored in local storage. Progress is
 persisted by the local API in `cache/gamification.sqlite3`, which is ignored by
@@ -266,6 +275,18 @@ development; do not expose this unauthenticated service to a public network.
 SQLite uses Python's standard library, so no additional dependency or setup
 command is required. Start the API and frontend using the existing commands
 above, then select **Mission Control** in the dashboard header.
+
+To enable the per-player training reset control for local development only,
+set both variables in the same PowerShell terminal before starting the API:
+
+```powershell
+$env:TERRALENS_ENV = "development"
+$env:TERRALENS_ENABLE_GAMIFICATION_RESET = "true"
+.\.venv\Scripts\python.exe -m uvicorn src.api:app --host 127.0.0.1 --port 8000 --reload
+```
+
+The reset operates only on the selected player's SQLite training records; it
+does not access SAR inputs or `cache/outputs/`. Keep the API bound to loopback.
 
 Answer submissions use the player UUID in the URL and an idempotency UUID in
 the request body, for example:

@@ -1,22 +1,34 @@
 import { ArrowLeft, ArrowRight, Target } from "lucide-react";
 import type { Mission } from "../gamification/api";
+import { RadarFactCard } from "./RadarFactCard";
+import { sound } from "../utils/audio";
+import { PilotProfile } from "./PilotProfile";
 
 interface MissionBriefingProps {
   mission: Mission;
+  task: Mission["tasks"][number];
+  replay: boolean;
   onBack: () => void;
   onBegin: () => void;
 }
 
 export function MissionBriefing({
   mission,
+  task,
+  replay,
   onBack,
   onBegin,
 }: MissionBriefingProps) {
-  const availableTask = mission.tasks.find((task) => task.released);
-
   return (
     <div className="game-page game-page--narrow">
-      <button className="game-back-button" onClick={onBack}>
+      <button
+        className="game-back-button"
+        onClick={() => {
+          sound.playKeyClick();
+          onBack();
+        }}
+        type="button"
+      >
         <ArrowLeft aria-hidden="true" size={15} />
         Mission Control
       </button>
@@ -28,13 +40,34 @@ export function MissionBriefing({
         <h1>{mission.title}</h1>
         <p className="briefing-tagline">{mission.tagline}</p>
         <p className="briefing-copy">{mission.briefing}</p>
+        <PilotProfile compact />
+        <div className="briefing-selected-task">
+          <span>CHALLENGE {task.id}</span>
+          <h2>{task.title}</h2>
+          {replay && (
+            <strong className="replay-chip">
+              REPLAY MODE · NO ADDITIONAL XP
+            </strong>
+          )}
+        </div>
         <div className="briefing-objectives">
           <span className="game-overline">MISSION OBJECTIVES</span>
-          {mission.tasks.map((task) => (
-            <div className="briefing-objective" key={task.id}>
-              <span>{task.id}</span>
-              <strong>{task.title}</strong>
-              <small>{task.released ? "AVAILABLE NOW" : "COMING NEXT"}</small>
+          {mission.tasks.map((objective) => (
+            <div
+              className={`briefing-objective${objective.id === task.id ? " briefing-objective--selected" : ""}`}
+              key={objective.id}
+            >
+              <span>{objective.id}</span>
+              <strong>{objective.title}</strong>
+              <small>
+                {!objective.released
+                  ? "COMING SOON"
+                  : objective.unlocked
+                    ? objective.id === task.id
+                      ? "UNLOCKED"
+                      : "AVAILABLE"
+                    : "LOCKED · FINISH PRIOR TASK"}
+              </small>
             </div>
           ))}
         </div>
@@ -45,12 +78,17 @@ export function MissionBriefing({
             contain satellite observations or claim a flood finding.
           </p>
         </div>
+        <RadarFactCard />
         <button
           className="game-button game-button--primary game-button--wide"
-          disabled={!availableTask}
-          onClick={onBegin}
+          disabled={!task.released || !task.unlocked}
+          onClick={() => {
+            sound.playLaunchFanfare();
+            onBegin();
+          }}
+          type="button"
         >
-          Begin {availableTask?.id ?? "training task"}
+          {replay ? `Replay ${task.id}` : `Launch ${task.id}`}
           <ArrowRight aria-hidden="true" size={16} />
         </button>
       </section>
