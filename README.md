@@ -1,310 +1,612 @@
-# TERRALENS — Sentinel-1 Jamuna data preparation
 
-This repository prepares calibrated Sentinel-1 GRD observations of the Jamuna
-River, Bangladesh, as local Cloud Optimized GeoTIFFs (COGs) using ASF HyP3 RTC
-processing. Each scene's VV/VH products share a pixel grid; different scenes
-may use different native CRSs, transforms, or extents.
+<div align="center">
 
-## Prepare Sentinel-1 RTC COGs
+# TERRALENS
 
-The fixed before-scene is:
+### Earth observation, made explorable.
 
-`S1A_IW_GRDH_1SDV_20200713T120451_20200713T120516_033436_03DFD8_67E8`
+**A radar investigation lab where real Sentinel-1 processing meets playful, hands-on learning.**
 
-Provide the later Sentinel-1 GRD scene identifier with `--after-scene`. The
-script submits one RTC job per scene using Sigma0 radiometry, power scale,
-10 m output spacing, and the Copernicus DEM.
+<br/>
 
-ASF HyP3 SDK and product documentation:
+[![Sentinel-1](https://img.shields.io/badge/Satellite-Sentinel--1-00B8D9?style=for-the-badge)](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](src/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](src/api.py)
+[![React](https://img.shields.io/badge/React-149ECA?style=for-the-badge&logo=react&logoColor=white)](frontend/)
+[![MapLibre](https://img.shields.io/badge/MapLibre-396CB2?style=for-the-badge)](https://maplibre.org/)
 
-- [HyP3 Python SDK](https://hyp3-docs.asf.alaska.edu/using/sdk/)
-- [HyP3 SDK API reference](https://hyp3-docs.asf.alaska.edu/using/sdk_api/)
-- [HyP3 authentication](https://hyp3-docs.asf.alaska.edu/using/authentication/)
-- [Sentinel-1 RTC Product Guide](https://hyp3-docs.asf.alaska.edu/guides/rtc_product_guide/)
+<br/>
 
-Install the pipeline dependencies in a local virtual environment (Windows
-PowerShell):
+<img src="docs/images/welcome-screen.png" alt="TERRALENS welcome screen" width="100%"/>
+
+<br/>
+
+**Explore Earth. Decode Radar. Discover Change.**
+
+[Quick Start](#quick-start) ·
+[SAR Lab](#the-sar-lab) ·
+[Missions](#learn-through-play) ·
+[Methodology](#scientific-methodology)
+
+</div>
+
+---
+
+## What is TERRALENS?
+
+TERRALENS is an interactive Earth-observation platform built around a real, reproducible **Sentinel-1 SAR workflow** for the Jamuna River near Sirajganj, Bangladesh.
+
+It combines satellite radar processing, geospatial analysis, interactive visualization, and gamified learning into one exploration experience.
+
+- **Investigate satellite observations.** Compare water masks derived from real Sentinel-1 acquisitions.
+- **Explore spatial change.** Navigate synchronized before-and-after maps and inspect observed new-water regions.
+- **Learn radar interactively.** Complete missions, earn XP, unlock challenges, and build your radar knowledge.
+- **Track your journey.** Review training submissions, progression, and certificates in your Research Journal.
+
+---
+
+## Explore TERRALENS
+
+<table>
+<tr>
+<td width="50%">
+<img src="docs/images/welcome-screen.png" alt="Welcome screen" width="100%"/>
+<h3>Welcome to TERRALENS</h3>
+Enter an animated satellite-inspired experience with optional sound and a cosmic interface.
+</td>
+<td width="50%">
+<img src="docs/images/sar-lab.png" alt="SAR Lab" width="100%"/>
+<h3>SAR Lab</h3>
+Investigate real Sentinel-1-derived water masks through interactive map visualization.
+</td>
+</tr>
+<tr>
+<td width="50%">
+<img src="docs/images/mission-control.png" alt="Mission Control" width="100%"/>
+<h3>Mission Control</h3>
+Learn radar concepts through sequential challenges and interactive training.
+</td>
+<td width="50%">
+<img src="docs/images/research-journal.png" alt="Research Journal" width="100%"/>
+<h3>Research Journal</h3>
+Track your mission progress, review explanations, and unlock certificates.
+</td>
+</tr>
+</table>
+
+---
+
+## The SAR Lab
+
+Explore observed water extent changes across two Sentinel-1A observations of the Jamuna River region.
+
+<div align="center">
+
+<img src="docs/images/sar-lab.png" alt="TERRALENS SAR Lab showing satellite-derived water masks" width="100%"/>
+
+*Interactive SAR exploration with before-and-after imagery and water-change overlays.*
+
+</div>
+
+### Study observations
+
+| Observation | Acquisition date |
+|---|---|
+| Before | 13 July 2020 |
+| After | 30 July 2020 |
+| Time interval | 17 days |
+
+**Before-scene**
+
+```text
+S1A_IW_GRDH_1SDV_20200713T120451_20200713T120516_033436_03DFD8_67E8
+```
+
+**After-scene**
+
+```text
+S1A_IW_GRDH_1SDV_20200730T121259_20200730T121324_033684_03E765_4001
+```
+
+### What the SAR Lab offers
+
+- **Before & After:** Compare classified water masks from two satellite acquisitions.
+- **Map exploration:** Explore spatial patterns through MapLibre.
+- **New Water Overlay:** Toggle pixels classified as water in the later observation but not the earlier one.
+- **Evidence Panel:** Inspect scene identifiers, acquisition dates, threshold, area, and shared valid coverage.
+- **Scientific Context:** Understand the processing parameters behind the displayed results.
+
+### Result layers
+
+| Layer | Description |
+|---|---|
+| Before Water | Water classification from the earlier acquisition |
+| After Water | Water classification from the later acquisition |
+| New Water | Observed water-classification change within shared valid coverage |
+
+<div align="center">
+
+<img src="docs/images/water-change.png" alt="Observed new-water classification visualization" width="100%"/>
+
+*Observed water extent change derived from Sentinel-1 VV backscatter.*
+
+</div>
+
+---
+
+## Learn Through Play
+
+TERRALENS turns radar learning into an interactive mission experience.
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+### Mission Control
+
+<img src="docs/images/mission-control.png" alt="Mission Control" width="100%"/>
+
+Sequential radar-learning challenges, answer feedback, and XP progression.
+
+</td>
+<td align="center" width="33%">
+
+### Mission Pilot
+
+<img src="docs/images/mission-pilot.png" alt="Mission Pilot" width="100%"/>
+
+Customize your pilot profile and explorer identity.
+
+</td>
+<td align="center" width="33%">
+
+### Arcade
+
+<img src="docs/images/arcade.png" alt="Arcade" width="100%"/>
+
+Play radar-learning activities and unlock cosmetic rewards.
+
+</td>
+</tr>
+</table>
+
+### Radar Rookie
+
+The first training mission contains four exercises:
+
+| Task | Progression |
+|---|---|
+| 1.1 | Initial challenge |
+| 1.2 | Unlock after completing 1.1 |
+| 1.3 | Unlock after completing 1.2 |
+| 1.4 | Final challenge |
+
+- Backend-graded answers.
+- Sequential challenge unlocking.
+- XP and rank progression.
+- Recorded training submissions.
+- Replay completed challenges for feedback.
+- Radar Rookie certificate after genuine completion.
+
+### Research Journal
+
+<div align="center">
+
+<img src="docs/images/research-journal.png" alt="Research Journal" width="100%"/>
+
+</div>
+
+Your Research Journal keeps track of training submissions and progress.
+
+- Review completed challenges.
+- Read answer explanations.
+- Track mission completion.
+- Unlock and print the Radar Rookie certificate.
+
+Mission completion and XP are recorded by the backend. Arcade scores, cosmetic coins, themes, and pilot profile information remain browser-local.
+
+---
+
+## Architecture
+
+<div align="center">
+
+```mermaid
+flowchart TD
+    A["Sentinel-1 GRD Observations"]
+    B["ASF HyP3 RTC Processing"]
+    C["Local VV / VH COGs"]
+    D["Geospatial Change Detection"]
+    E["Water Masks + results.json"]
+    F["FastAPI Results & Tile Service"]
+    G["React + TypeScript + MapLibre"]
+    H["Interactive SAR Lab"]
+
+    A --> B --> C --> D --> E --> F --> G --> H
+
+    G --> I["Mission Control & Arcade"]
+    I --> J["Gamification API"]
+    J --> K[("SQLite Training Progress")]
+```
+
+</div>
+
+### Technology stack
+
+| Layer | Technologies |
+|---|---|
+| Satellite Processing | ASF HyP3, Sentinel-1 GRD RTC |
+| Raster Analysis | Rasterio, GDAL, NumPy, SciPy |
+| Backend | Python, FastAPI, Pydantic |
+| Training Persistence | SQLite |
+| Frontend | React, TypeScript, Vite |
+| Visualization | MapLibre GL JS |
+| Mapping | OpenFreeMap basemap |
+
+---
+
+## Quick Start
+
+### Requirements
+
+- Python 3.10+
+- Node.js 20.19+ or 22.12+
+- npm
+- Internet connection for external map resources and ASF processing
+
+### 1. Install Python dependencies
+
+From the repository root:
 
 ```powershell
 py -m venv .venv
+
 .\.venv\Scripts\python.exe -m pip install -r requirements-data.txt
 ```
 
-First inspect the exact job requests without authentication or network access:
+### 2. Start the backend
+
+In Terminal 1, from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn src.api:app --host 127.0.0.1 --port 8000 --reload
+```
+
+API documentation:
+
+http://127.0.0.1:8000/docs
+
+### 3. Start the frontend
+
+In Terminal 2:
+
+```powershell
+cd frontend
+
+npm ci
+
+npm run dev
+```
+
+Open the local URL printed by Vite, usually:
+
+http://localhost:5173
+
+Mission Control and the training experience can be explored without prepared SAR outputs. The SAR Lab displays its processing status until local analysis results are available.
+
+### Frontend API configuration
+
+The frontend defaults to:
+
+```text
+http://127.0.0.1:8000
+```
+
+To configure the API origin, copy:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+from `frontend/`, then configure `VITE_TERRALENS_API_URL` or the individual endpoint variables.
+
+Vite environment variables are browser-visible. Never store credentials in frontend environment files.
+
+---
+
+## Sentinel-1 Data Workflow
+
+TERRALENS prepares ASF HyP3 Sentinel-1 GRD RTC products using:
+
+| Parameter | Value |
+|---|---|
+| Radiometry | Sigma0 |
+| Scale | Linear power |
+| Output spacing | 10 m |
+| DEM | Copernicus DEM |
+| Polarizations | VV and VH |
+
+VV and VH products share a pixel grid within each scene. Different acquisitions can have different native CRSs, transforms, and extents.
+
+### Prepare RTC COGs
+
+The before-scene is fixed:
+
+```text
+S1A_IW_GRDH_1SDV_20200713T120451_20200713T120516_033436_03DFD8_67E8
+```
+
+Provide a later Sentinel-1 GRD scene identifier.
+
+**Inspect job requests first:**
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\data\prepare_sar.py --after-scene <AFTER_SCENE_ID> --dry-run
 ```
 
-Live execution submits two publicly visible HyP3 jobs and may consume
-processing credits. After verifying the scene ID and the HyP3 account's
-available processing credits, explicitly authorize submission:
+**Submit RTC processing:**
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\data\prepare_sar.py --after-scene <AFTER_SCENE_ID> --auth token --confirm-submit
 ```
 
-Allow several gigabytes of free disk space: ASF's RTC guide gives an example
-10 m VV product of about 2.35 GB; actual product sizes vary.
+Live execution submits two HyP3 jobs and may consume processing credits.
 
-The default `token` authentication mode prompts for an Earthdata Login token
-without echoing it or saving it. Alternatively, `--auth netrc` tells the SDK to
-use its local `.netrc` credentials. Never pass credentials as command-line
-arguments or commit them.
+Authentication options:
 
-The script monitors both jobs, downloads their product archives, discovers the
-VV and VH GeoTIFFs from the returned products, creates COGs when needed, and
-checks CRS, 10 m resolution, dimensions, nodata, and exact within-scene VV/VH
-alignment. It records each scene's native grid and whether cross-scene
-reprojection is needed in `cache/sar/metadata.json`; it does not require the
-before and after scenes to have identical grids. The complete
-`cache/sar/` directory is ignored by Git; it contains downloaded products and
-must remain local.
+- `--auth token`: prompts for an Earthdata token without echoing or saving it.
+- `--auth netrc`: uses locally configured `.netrc` credentials.
 
-Run the focused local tests without submitting jobs:
+Never pass credentials as command-line arguments or commit them.
 
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_prepare_sar.py"
-```
+The preparation pipeline downloads the products, creates COGs when needed, validates VV/VH alignment, and records scene metadata.
 
-## Run change detection
+### Run change detection
 
-After the prepared products are available, run the VV comparison from the
-repository root:
+After preparation:
 
 ```powershell
 .\.venv\Scripts\python.exe -m scripts.data.run_change_detection
 ```
 
-The runner reads each scene's `rasters.VV.path` from metadata, resolves those
-repository-relative paths inside `cache/sar/`, and reprojects the after-scene
-onto a cropped before-scene grid when needed. If a previous preparation run
-stopped before writing `metadata.json`, the runner can reconstruct the scene
-records from the local COGs and their matching HyP3 ZIP README/log manifests.
-That recovery validates source scene IDs, Sigma0 power, and processing details;
-it makes no network calls and does not submit jobs.
-The default `-15 dB` threshold is an initial heuristic; override the threshold
-or connected-component minimum when justified for the study:
+Or explicitly configure the threshold and connected-component minimum:
 
 ```powershell
 .\.venv\Scripts\python.exe -m scripts.data.run_change_detection --threshold-db -15 --min-component-pixels 1
 ```
 
-It writes `before_water.tif`, `after_water.tif`, `new_water.tif`, and
-`results.json` to `cache/outputs/`. The target is the before-scene grid cropped
-to the transformed geographic bounds overlap. The after-scene linear Sigma0
-power is resampled with nearest-neighbour; comparison masks are limited to
-before-grid pixel centers with valid, finite, positive values in both scenes.
-Pixels outside shared valid coverage are nodata in all three masks. Mask values
-are 1 for water, 0 for observed non-water, and 255 for nodata. The JSON records
-both source grids, the comparison grid and coverage rule, scene IDs and dates,
-threshold, minimum component size, and area. This is pixel-center coverage;
-partial edge pixels are not fractionally weighted.
+Generated outputs:
 
-Run all local synthetic tests without real SAR data or HyP3 jobs:
-
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests
+```text
+cache/outputs/
+├── before_water.tif
+├── after_water.tif
+├── new_water.tif
+└── results.json
 ```
 
-## Methods and interpretation
+### Geospatial comparison
 
-### Input and preprocessing
+The processing workflow:
 
-The preparation workflow uses ASF HyP3 Sentinel-1 GRD RTC products with
-Sigma0 radiometry, linear power scale, 10 m output resolution, and the
-Copernicus DEM. VV and VH products are downloaded and recorded in
-`cache/sar/metadata.json`; the current change detector uses **VV only**.
-The strict `detect_water_change()` array API requires matching CRS,
-dimensions, and affine transforms. The geospatial runner handles differing
-native scene grids by reprojecting the after-scene to the cropped before-scene
-grid and comparing only shared valid coverage. Nodata, non-finite, zero, and
-negative power values are excluded.
+1. Reads native scene grids from metadata.
+2. Transforms geographic bounds into the comparison CRS.
+3. Crops the before-scene grid to the overlap.
+4. Reprojects after-scene linear Sigma0 power using nearest-neighbour sampling.
+5. Restricts comparison to valid shared pixel centers.
+6. Produces before-water, after-water, and new-water masks.
+7. Records grid, coverage, parameters, and area in JSON.
 
-### Water masks and area
+Mask values:
 
-For valid positive VV Sigma0 power, the detector computes
-`10 * log10(power)` and classifies pixels at or below the configured dB
-threshold as water. The default **−15 dB is an initial heuristic**, not a
-locally calibrated or universally valid water threshold. The current workflow
-does not validate that threshold against ground truth; results should be
-checked against independent reference data and tested for threshold
-sensitivity.
+| Value | Meaning |
+|---|---|
+| `1` | Classified water |
+| `0` | Observed non-water |
+| `255` | Nodata |
 
-Before and after water masks are classified and component-filtered separately
-using 8-neighbour connectivity. The configured minimum is in pixels and
-defaults to 1, which retains all components. “New water” is the after-water
-mask minus the before-water mask, restricted to pixels valid in both scenes.
-When native grids differ, after-scene linear power is reprojected to the
-before-scene grid using nearest-neighbour sampling, avoiding interpolation of
-nodata and mixed backscatter values. The comparison is cropped to the
-transformed bounds intersection and further masked to valid shared pixel
-centers; no pixels outside that coverage enter the masks or area. Components
-are filtered within the shared coverage, so components cut by its edge may be
-smaller than their full-scene counterparts.
-Its area is the number of selected pixels multiplied by the affine pixel-area
-determinant, with projected metric CRS units converted to square kilometres.
-This is projected-grid area, not a hydrologically corrected or geodesic flood
-measurement.
+---
 
-### What the result means
+## Scientific Methodology
 
-- **Observed water extent change:** pixels that meet the threshold in the
-  after-scene but not the before-scene. This is the direct algorithm output.
-- **Possible flood-related change:** a contextual interpretation that may be
-  considered with independent rainfall, river-gauge, optical, or field
-  evidence; this detector does not establish cause.
-- **Confirmed flood:** **not claimed**. A thresholded SAR difference is not
-  ground truth or event attribution.
+### Water classification
 
-For observations 17 days apart, the images only bracket change between two
-acquisition times. They cannot establish when within that interval water
-appeared, whether it persisted, or whether a flood caused it. Vegetation,
-urban double-bounce, soil moisture, speckle, acquisition geometry, imperfect
-registration, mixed pixels, and threshold choice can all affect the masks.
+The detector converts valid positive VV Sigma0 power to decibels:
 
-## Reproducibility and license status
+\[
+\sigma^0_{dB}=10\log_{10}(\sigma^0_{power})
+\]
 
-The before scene ID is recorded above. Supply the intended after-scene ID to
-the preparation command; both IDs, acquisition times, RTC settings, alignment
-metadata, and HyP3 SDK version are recorded in `cache/sar/metadata.json`.
-`cache/outputs/results.json` records the scene pair, threshold, minimum
-component size, CRS, pixel spacing, and area. Re-run change detection with the
-same `--threshold-db` and `--min-component-pixels` values to reproduce the
-classification. Keep the downloaded COGs and metadata together; they are
-inputs, not generated test fixtures.
+Pixels at or below the configured threshold are classified as water.
 
-`requirements-data.txt` currently pins the HyP3 SDK but leaves other direct
-dependencies unpinned, so a fresh install is not a fully locked software
-environment. For an exact run record the Python version and resolved packages
-alongside the result, for example:
+The default threshold is **−15 dB**, an initial heuristic that can be adjusted using `--threshold-db`.
 
-```powershell
-.\.venv\Scripts\python.exe --version
-.\.venv\Scripts\python.exe -m pip freeze > environment-lock.txt
+### Observed new-water change
+
+\[
+W_{new}=W_{after}\setminus W_{before}
+\]
+
+The classification is restricted to shared valid coverage.
+
+The area is calculated from selected pixels and the affine pixel-area determinant in the projected metric CRS.
+
+### Interpretation
+
+TERRALENS visualizes **observed water extent change** between Sentinel-1 acquisitions.
+
+The classification may be investigated alongside rainfall, river-gauge, optical, or field observations to understand possible flood-related changes.
+
+A thresholded SAR difference alone does not establish flood causality or confirmed flood extent.
+
+---
+
+## API Reference
+
+Interactive documentation:
+
+http://127.0.0.1:8000/docs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/health` | API health |
+| GET | `/api/status` | SAR processing availability |
+| GET | `/api/results` | Change-detection results |
+| GET | `/tiles/{layer}/tiles.json` | TileJSON |
+| GET | `/tiles/{layer}/{z}/{x}/{y}.png` | Raster PNG tile |
+| GET | `/api/gamification/missions` | Mission content |
+| GET | `/api/gamification/config` | Development configuration |
+| POST | `/api/gamification/players/{player_id}/answers` | Submit training answer |
+| GET | `/api/gamification/players/{player_id}/progress` | XP and progression |
+| GET | `/api/gamification/players/{player_id}/journal` | Training journal |
+| POST | `/api/gamification/players/{player_id}/reset` | Development-only player reset |
+
+Available raster layers:
+
+```text
+before_water
+after_water
+new_water
 ```
 
-No root `LICENSE` file is present. Therefore Apache-2.0 licensing cannot
-currently be verified; do not treat the repository as Apache-2.0 licensed
-until the canonical license is added.
+The SAR endpoints read existing `cache/outputs/` files. Processing is performed separately by the data pipeline.
 
-## Local API and interactive frontend
+---
 
-The local FastAPI service exposes change results and transparent PNG XYZ tiles
-for the before-water, after-water, and new-water GeoTIFF masks. It reads only
-the files in `cache/outputs/`; it does not serve raw COGs or generate SAR
-results. The new-water layer is rendered blue and the before/after water masks
-use separate colors. The MapLibre dashboard includes a toggleable observed
-new-water overlay and an evidence panel showing scene dates and IDs, threshold,
-area, shared valid coverage, and a prominent caveat that the result is not
-confirmed flood damage.
+## Training Progression
 
-Install the backend dependencies in the existing virtual environment:
+Training progress is persisted in:
 
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-data.txt
+```text
+cache/gamification.sqlite3
 ```
 
-In one terminal, run the API from the repository root:
+The browser generates an anonymous player UUID stored in local storage.
 
-```powershell
-.\.venv\Scripts\python.exe -m uvicorn src.api:app --host 127.0.0.1 --port 8000 --reload
-```
+Backend records determine:
 
-If change-detection outputs have not been generated, `/api/status` reports
-`waiting_for_sar_processing`; the frontend displays **Waiting for SAR
-processing**, keeps the area unknown, and polls the service every five
-seconds. After preparing scenes, generate outputs with:
+- Mission completion.
+- Challenge unlocks.
+- XP awards.
+- Rank progression.
+- Journal entries.
+- Certificate eligibility.
 
-```powershell
-.\.venv\Scripts\python.exe -m scripts.data.run_change_detection
-```
+Completed challenges can be replayed for feedback without awarding duplicate XP.
 
-The API provides `/api/results`, `/api/status`, and TileJSON / PNG tile routes
-at `/tiles/{before_water|after_water|new_water}/tiles.json` and
-`/tiles/{layer}/{z}/{x}/{y}.png`. SAR result and tile routes are read-only.
-Local CORS is enabled for localhost Vite development origins.
+### Development-only reset
 
-In a second terminal, start the React, TypeScript, Vite, and MapLibre dashboard:
+Reset is disabled by default.
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend connects to `http://127.0.0.1:8000` by default. To change the API
-origin or individual endpoints, copy `frontend/.env.example` to
-`frontend/.env.local` and set the relevant URLs. Vite environment variables
-are client-visible; do not put credentials in them. The dark basemap and web
-fonts use external services and require internet access; MapLibre displays
-basemap attribution.
-
-### Radar Rookie training
-
-The existing dashboard includes a Mission Control training area. Level 1,
-**Radar Rookie**, has four implemented exercises. Task 1.1 is initially
-available; the remaining exercises unlock in sequence as the player completes
-the preceding task. Completed exercises can be replayed for answer feedback,
-but a replay cannot award XP or create another journal entry. Mission prompts
-use simulated examples and are explicitly labeled as training—not as
-measurements, flood findings, or NISAR observations. The existing SAR map,
-methods panel, and uncertainty disclosures remain separate.
-
-The current FastAPI service exposes:
-
-- `GET /api/gamification/missions` — public mission content without answer
-  keys. Add `?player_id=<uuid>` for that player's unlock state.
-- `GET /api/gamification/config` — exposes whether the local development reset
-  control is enabled.
-- `POST /api/gamification/players/{player_id}/answers` — grades a submitted
-  choice and awards XP once per completed task; completed-task replays return
-  feedback but do not grant rewards again.
-- `GET /api/gamification/players/{player_id}/progress` — returns XP, rank, and
-  mission completion.
-- `GET /api/gamification/players/{player_id}/journal` — returns the player's
-  training submissions and explanations.
-- `POST /api/gamification/players/{player_id}/reset` — deletes only that
-  player's training progress, and returns 404 unless both development reset
-  environment variables are enabled.
-
-The browser creates an anonymous UUID stored in local storage. Progress is
-persisted by the local API in `cache/gamification.sqlite3`, which is ignored by
-Git and is not shared across machines. The API is intended for loopback local
-development; do not expose this unauthenticated service to a public network.
-SQLite uses Python's standard library, so no additional dependency or setup
-command is required. Start the API and frontend using the existing commands
-above, then select **Mission Control** in the dashboard header.
-
-To enable the per-player training reset control for local development only,
-set both variables in the same PowerShell terminal before starting the API:
+Enable it for local development only:
 
 ```powershell
 $env:TERRALENS_ENV = "development"
 $env:TERRALENS_ENABLE_GAMIFICATION_RESET = "true"
+
 .\.venv\Scripts\python.exe -m uvicorn src.api:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-The reset operates only on the selected player's SQLite training records; it
-does not access SAR inputs or `cache/outputs/`. Keep the API bound to loopback.
+The reset affects only the selected player's training records.
 
-Answer submissions use the player UUID in the URL and an idempotency UUID in
-the request body, for example:
+Keep the unauthenticated API bound to `127.0.0.1`.
 
-```json
-{
-  "submission_id": "9db3b5f0-b738-4d6c-88c2-7f07dd78a912",
-  "task_id": "1.1",
-  "answer": "A"
-}
-```
+---
 
-In the UI the submission ID is generated automatically. Repeated requests
-cannot award XP more than once for the same task.
+## Development & Testing
 
-Create a production frontend build with `npm run build` from `frontend/`.
-Backend endpoint tests and the existing synthetic processing tests run with:
+### Run Python tests
+
+From the repository root:
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests
 ```
+
+### Run preparation tests
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_prepare_sar.py"
+```
+
+### Build frontend
+
+From `frontend/`:
+
+```powershell
+npm run build
+```
+
+### Validate Git changes
+
+```powershell
+git diff --check
+git status --short
+```
+
+---
+
+## Repository Structure
+
+```text
+.
+├── src/
+│   ├── api.py
+│   ├── compute/
+│   │   └── change.py
+│   └── gamification/
+│
+├── scripts/
+│   └── data/
+│       ├── prepare_sar.py
+│       └── run_change_detection.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   └── gamification/
+│   └── public/
+│
+├── tests/
+│
+├── docs/
+│   ├── images/
+│   └── reference/
+│       └── TERRALENS.md
+│
+├── requirements-data.txt
+└── README.md
+```
+
+---
+
+## References
+
+- [ASF Search](https://search.asf.alaska.edu/)
+- [ASF HyP3 Python SDK](https://hyp3-docs.asf.alaska.edu/using/sdk/)
+- [HyP3 SDK API Reference](https://hyp3-docs.asf.alaska.edu/using/sdk_api/)
+- [HyP3 Authentication](https://hyp3-docs.asf.alaska.edu/using/authentication/)
+- [Sentinel-1 RTC Product Guide](https://hyp3-docs.asf.alaska.edu/guides/rtc_product_guide/)
+- [NASA Earthdata](https://www.earthdata.nasa.gov/)
+- [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/)
+- [Sentinel-1 Mission](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1)
+
+---
+
+## Project Status
+
+TERRALENS brings together real satellite observations, geospatial processing, interactive exploration, and radar-learning missions in one application.
+
+The current implementation focuses on Sentinel-1 SAR analysis and the Jamuna River study area. The processing threshold remains an initial heuristic, and water extent changes are interpreted as observed satellite classifications.
+
+No root `LICENSE` file is currently present.
+
+---
+
+<div align="center">
+
+### Explore Earth. Decode Radar. Discover Change.
+
+**TERRALENS — Your planet. Your mission.**
+
+</div>
