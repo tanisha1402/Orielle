@@ -2,7 +2,8 @@ import { ArrowLeft, ArrowRight, Target } from "lucide-react";
 import type { Mission } from "../gamification/api";
 import { RadarFactCard } from "./RadarFactCard";
 import { sound } from "../utils/audio";
-import { PilotProfile } from "./PilotProfile";
+import { loadAvatar, PilotAvatar } from "./Avatar";
+import { loadPilotCallsign } from "./PilotProfile";
 
 interface MissionBriefingProps {
   mission: Mission;
@@ -46,8 +47,11 @@ export function MissionBriefing({
         </div>
         <p className="reference-briefing-copy">{mission.briefing}</p>
         <div className="reference-briefing-pilot">
-          <PilotProfile compact />
-          <span>YOUR PILOT IS READY</span>
+          <PilotAvatar cfg={loadAvatar()} size={42} ring />
+          <div>
+            <span>YOUR PILOT IS READY</span>
+            <strong>{loadPilotCallsign()}</strong>
+          </div>
         </div>
         <div className="briefing-selected-task">
           <span className="reference-eyebrow">SELECTED CHALLENGE {task.id}</span>

@@ -8,6 +8,7 @@ import {
   Info,
   Radio,
   Satellite,
+  UserRound,
   Waves,
 } from "lucide-react";
 import { MapView } from "./components/MapView";
@@ -17,6 +18,7 @@ import { CosmicBackground } from "./components/CosmicBackground";
 import { EvidencePanel } from "./components/EvidencePanel";
 import { MethodologyPanel } from "./components/MethodologyPanel";
 import { ObservationCard } from "./components/ObservationCard";
+import { MissionPilot } from "./components/MissionPilot";
 import { SoundToggle } from "./components/SoundToggle";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { parseChangeSummary, type ChangeSummary } from "./data/analysis";
@@ -38,7 +40,7 @@ import {
 
 export default function App() {
   const [activeWorkspace, setActiveWorkspace] = useState<
-    "welcome" | "dashboard" | "training" | "journal" | "arcade"
+    "welcome" | "dashboard" | "training" | "journal" | "arcade" | "pilot"
   >("welcome");
   const [scenePair, setScenePair] =
     useState<ScenePairMetadata>(INITIAL_SCENE_PAIR);
@@ -164,6 +166,7 @@ export default function App() {
             { id: "training", label: "Missions", icon: <Satellite aria-hidden="true" size={15} /> },
             { id: "journal", label: "Journal", icon: <BookOpen aria-hidden="true" size={15} /> },
             { id: "arcade", label: "Arcade", icon: <Gamepad2 aria-hidden="true" size={15} /> },
+            { id: "pilot", label: "Mission Pilot", icon: <UserRound aria-hidden="true" size={15} /> },
           ] as const).map((item) => (
             <button
               aria-current={activeWorkspace === item.id ? "page" : undefined}
@@ -188,7 +191,9 @@ export default function App() {
       </header>
 
       <main className="workspace" id="top">
-        {activeWorkspace === "training" ||
+        {activeWorkspace === "pilot" ? (
+          <MissionPilot onBack={() => setActiveWorkspace("training")} />
+        ) : activeWorkspace === "training" ||
         activeWorkspace === "journal" ||
         activeWorkspace === "arcade" ? (
           <GamificationHub

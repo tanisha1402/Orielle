@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 // A small avatar maker: boy or girl, skin, hair, suit and gear. Stored in this browser only.
 export interface AvatarConfig {
@@ -141,9 +141,6 @@ export const PilotAvatar: React.FC<{ cfg: AvatarConfig; size?: number; ring?: bo
 
 const randomOf = (n: number) => Math.floor(Math.random() * n);
 
-const sec: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: '6px' };
-const lab: React.CSSProperties = { fontFamily: "'Lilita One', sans-serif", fontSize: '13px', letterSpacing: '1px', color: '#FDF5CC' };
-
 const Swatches: React.FC<{ colors: string[]; value: number; onPick: (i: number) => void; names?: string[] }> = ({ colors, value, onPick, names }) => (
   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
     {colors.map((c, i) => (
@@ -167,81 +164,56 @@ const Chips: React.FC<{ items: readonly string[]; value: number; onPick: (i: num
 
 export const AvatarEditor: React.FC<{
   initial: AvatarConfig; callsign: string;
-  onSave: (cfg: AvatarConfig, callsign: string) => boolean; onClose: () => void;
-}> = ({ initial, callsign, onSave, onClose }) => {
+  onSave: (cfg: AvatarConfig, callsign: string) => boolean;
+  onCancel: () => void;
+  cancelLabel?: string;
+}> = ({ initial, callsign, onSave, onCancel, cancelLabel = 'CANCEL' }) => {
   const [cfg, setCfg] = useState<AvatarConfig>(initial);
   const [name, setName] = useState<string>(callsign);
   const [saveError, setSaveError] = useState("");
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
-  const set = (p: Partial<AvatarConfig>) => setCfg(c => ({ ...c, ...p }));
+  const [saveMessage, setSaveMessage] = useState("");
+  const set = (p: Partial<AvatarConfig>) => {
+    setSaveError("");
+    setSaveMessage("");
+    setCfg(c => ({ ...c, ...p }));
+  };
   const setGender = (g: 'boy' | 'girl') => set({ gender: g, hair: 0 });
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    const previousFocus =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    const focusable = () =>
-      dialog?.querySelectorAll<HTMLElement>(
-        'button:not(:disabled), input:not(:disabled), [tabindex]:not([tabindex="-1"])',
-      );
-    focusable()?.[0]?.focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        onCloseRef.current();
-        return;
-      }
-      if (event.key !== 'Tab') return;
-      const items = focusable();
-      if (!items?.length) {
-        event.preventDefault();
-        dialog?.focus();
-        return;
-      }
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      previousFocus?.focus();
-    };
-  }, []);
-
   return (
-    <div role="dialog" aria-modal="true" aria-label="Customise your pilot"
-      onClick={onClose}
-      style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(3,6,18,0.78)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-      <div className="tl-acard" ref={dialogRef} tabIndex={-1} onClick={e => e.stopPropagation()}
-        style={{ ['--ac' as string]: '#9D4EDD', width: 'min(720px, 100%)', maxHeight: '92vh', overflowY: 'auto', display: 'grid', gridTemplateColumns: 'minmax(180px, 220px) 1fr', gap: '22px', background: 'rgba(8,14,34,0.96)' } as React.CSSProperties}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-          <div style={{ padding: '8px', borderRadius: '50%', border: '3px dashed rgba(0,240,255,0.5)' }}>
+    <section aria-label="Mission Pilot customization" className="avatar-editor-shell">
+      <div className="tl-acard avatar-editor-card">
+        <div className="avatar-editor-preview">
+          <div className="avatar-editor-portrait">
             <PilotAvatar cfg={cfg} size={170} ring />
           </div>
-          <div className="tl-gsub" style={{ fontSize: '15px' }}>YOUR PILOT</div>
-          <button type="button" onClick={() => setCfg({ gender: Math.random() < 0.5 ? 'boy' : 'girl', skin: randomOf(6), hair: randomOf(5), hairColor: randomOf(6), suit: randomOf(6), gear: randomOf(4) })}
-            style={{ padding: '6px 14px', borderRadius: '16px', border: '2px solid #00F0FF', background: 'rgba(0,240,255,0.1)', color: '#7df9ff', fontFamily: "'Lilita One', sans-serif", fontSize: '14px', cursor: 'pointer' }}>🎲 SURPRISE ME</button>
+          <div className="tl-gsub avatar-editor-preview__label">YOUR PILOT</div>
+          <button
+            className="avatar-editor-random"
+            type="button"
+            onClick={() => set({ gender: Math.random() < 0.5 ? 'boy' : 'girl', skin: randomOf(6), hair: randomOf(5), hairColor: randomOf(6), suit: randomOf(6), gear: randomOf(4) })}
+          >
+            🎲 SURPRISE ME
+          </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', minWidth: 0 }}>
-          <div style={sec}><span style={lab}>CALLSIGN</span>
-            <input value={name} maxLength={24} onChange={e => setName(e.target.value)} aria-label="Callsign"
-              style={{ padding: '8px 12px', borderRadius: '12px', border: '2px solid #475569', background: 'rgba(15,23,42,0.85)', color: '#f8fafc', fontSize: '14px', outline: 'none' }} />
+        <div className="avatar-editor-options">
+          <div className="avatar-editor-field">
+            <label className="avatar-editor-label" htmlFor="mission-pilot-callsign">CALLSIGN</label>
+            <input
+              className="avatar-editor-callsign"
+              id="mission-pilot-callsign"
+              value={name}
+              maxLength={24}
+              onChange={e => {
+                setName(e.target.value);
+                setSaveError("");
+                setSaveMessage("");
+              }}
+            />
           </div>
-          <div style={sec}><span style={lab}>PILOT TYPE</span>
-            <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="avatar-editor-field">
+            <span className="avatar-editor-label">PILOT TYPE</span>
+            <div className="avatar-editor-pilot-types">
               {(['boy', 'girl'] as const).map(g => (
                 <button key={g} type="button" onClick={() => setGender(g)}
                   style={{ flex: 1, padding: '8px', borderRadius: '16px', cursor: 'pointer', fontFamily: "'Lilita One', sans-serif", fontSize: '16px', letterSpacing: '1px',
@@ -250,24 +222,30 @@ export const AvatarEditor: React.FC<{
               ))}
             </div>
           </div>
-          <div style={sec}><span style={lab}>SKIN</span><Swatches colors={SKINS} value={cfg.skin} onPick={i => set({ skin: i })} /></div>
-          <div style={sec}><span style={lab}>HAIRSTYLE</span><Chips items={HAIR_NAMES[cfg.gender]} value={cfg.hair} onPick={i => set({ hair: i })} /></div>
-          <div style={sec}><span style={lab}>HAIR COLOUR</span><Swatches colors={HAIR_COLORS} value={cfg.hairColor} onPick={i => set({ hairColor: i })} /></div>
-          <div style={sec}><span style={lab}>FLIGHT SUIT</span><Swatches colors={SUITS} names={SUIT_NAMES} value={cfg.suit} onPick={i => set({ suit: i })} /></div>
-          <div style={sec}><span style={lab}>GEAR</span><Chips items={GEARS} value={cfg.gear} onPick={i => set({ gear: i })} /></div>
-          <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
-            <button type="button" className="tl-btn3d" style={{ flex: 1, padding: '8px', cursor: 'pointer' }}
+          <div className="avatar-editor-field"><span className="avatar-editor-label">SKIN</span><Swatches colors={SKINS} value={cfg.skin} onPick={i => set({ skin: i })} /></div>
+          <div className="avatar-editor-field"><span className="avatar-editor-label">HAIRSTYLE</span><Chips items={HAIR_NAMES[cfg.gender]} value={cfg.hair} onPick={i => set({ hair: i })} /></div>
+          <div className="avatar-editor-field"><span className="avatar-editor-label">HAIR COLOUR</span><Swatches colors={HAIR_COLORS} value={cfg.hairColor} onPick={i => set({ hairColor: i })} /></div>
+          <div className="avatar-editor-field"><span className="avatar-editor-label">FLIGHT SUIT</span><Swatches colors={SUITS} names={SUIT_NAMES} value={cfg.suit} onPick={i => set({ suit: i })} /></div>
+          <div className="avatar-editor-field"><span className="avatar-editor-label">GEAR</span><Chips items={GEARS} value={cfg.gear} onPick={i => set({ gear: i })} /></div>
+          <div className="avatar-editor-actions">
+            <button type="button" className="tl-btn3d avatar-editor-save"
               onClick={() => {
-                if (!onSave(cfg, name.trim() || callsign)) {
+                if (onSave(cfg, name.trim() || callsign)) {
+                  setSaveError("");
+                  setSaveMessage("Pilot profile saved in this browser.");
+                } else {
+                  setSaveMessage("");
                   setSaveError("Your look is active for this session, but could not be saved in this browser.");
                 }
               }}>SAVE LOOK</button>
-            <button type="button" onClick={onClose}
-              style={{ padding: '8px 18px', borderRadius: '28px', border: '3px solid #475569', background: 'transparent', color: '#cbd5e1', fontFamily: "'Lilita One', sans-serif", fontSize: '16px', cursor: 'pointer' }}>CANCEL</button>
+            <button className="avatar-editor-cancel" type="button" onClick={onCancel}>
+              {cancelLabel}
+            </button>
           </div>
+          {saveMessage && <p className="avatar-save-message avatar-save-message--success" role="status">{saveMessage}</p>}
           {saveError && <p className="avatar-save-message" role="alert">{saveError}</p>}
         </div>
       </div>
-    </div>
+    </section>
   );
 };

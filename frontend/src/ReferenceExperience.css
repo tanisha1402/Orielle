@@ -324,31 +324,29 @@
   box-shadow: 0 0 24px rgba(0, 240, 255, 0.16), inset 0 0 18px rgba(0, 240, 255, 0.08);
 }
 
-.pilot-radar-frame .pilot-profile {
+.pilot-radar-profile {
   position: relative;
   z-index: 1;
   display: grid;
   justify-items: center;
   gap: 7px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
 }
 
-.pilot-radar-frame .pilot-profile-copy > span {
+.pilot-radar-profile > span {
   color: #73d9ff;
   font: 700 8px/1.2 "Chakra Petch", monospace;
 }
 
-.pilot-radar-frame .pilot-profile-copy strong {
+.pilot-radar-profile > strong {
+  max-width: 140px;
+  overflow: hidden;
   color: var(--reference-cream);
   font: 400 15px/1.2 "Lilita One", sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.pilot-radar-frame .pilot-profile-edit {
-  display: none;
-}
+.pilot-radar-profile > svg { width: 66px; height: 66px; }
 
 .pilot-radar-ring {
   position: absolute;
@@ -788,11 +786,6 @@
 .shop-theme small { display: inline-flex; align-items: center; gap: 4px; color: var(--theme-accent); font: 700 7px "Chakra Petch", monospace; }
 .shop-message { margin: 10px 0 0; color: #9fe8c4; font-size: 9px; }
 
-.pilot-profile[data-theme="solar"] .pilot-avatar-frame { border-color: #ffb84d; box-shadow: 0 0 15px rgba(255, 184, 77, 0.6); }
-.pilot-profile[data-theme="ocean"] .pilot-avatar-frame { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
-.pilot-profile[data-theme="forest"] .pilot-avatar-frame { border-color: #34d399; box-shadow: 0 0 15px rgba(52, 211, 153, 0.6); }
-.pilot-profile[data-theme="aurora"] .pilot-avatar-frame { border-color: #00f0ff; box-shadow: 0 0 15px rgba(0, 240, 255, 0.55); }
-
 .certificate-open { position: relative; z-index: 1; }
 .certificate-overlay { position: fixed; z-index: 300; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 24px; background: rgba(2, 5, 18, 0.91); backdrop-filter: blur(10px); }
 .certificate-dialog { position: relative; display: grid; width: min(940px, 100%); justify-items: center; gap: 18px; padding: 25px; border: 2px solid rgba(0, 240, 255, 0.45); border-radius: 22px; background: #081126; box-shadow: 0 0 45px rgba(0, 240, 255, 0.17); }
@@ -875,8 +868,8 @@
   .mission-control-actions .reference-button { flex: 1; }
   .pilot-dossier { grid-template-columns: minmax(115px, 135px) minmax(0, 1fr); padding: 15px; }
   .pilot-radar-frame { width: 116px; height: 116px; }
-  .pilot-radar-frame .pilot-profile > svg { width: 54px; height: 54px; }
-  .pilot-radar-frame .pilot-profile-copy strong { font-size: 11px; }
+  .pilot-radar-profile > svg { width: 54px; height: 54px; }
+  .pilot-radar-profile > strong { font-size: 11px; }
   .pilot-achievements > div { grid-template-columns: 1fr; }
   .pilot-achievements > div > span { justify-content: flex-start; }
   .reference-mission-card__header { grid-template-columns: 42px minmax(0, 1fr); }
@@ -998,7 +991,9 @@
   border-radius: 18px;
   background: rgba(5, 15, 42, 0.57);
 }
-.reference-briefing-pilot > span { color: #73d9ff; font: 700 10px "Chakra Petch", monospace; letter-spacing: 0.11em; }
+.reference-briefing-pilot > div { display: grid; gap: 4px; }
+.reference-briefing-pilot > div > span { color: #73d9ff; font: 700 10px "Chakra Petch", monospace; letter-spacing: 0.11em; }
+.reference-briefing-pilot strong { color: var(--reference-cream); font: 400 14px "Lilita One", sans-serif; }
 .reference-briefing-card .briefing-selected-task {
   margin: 0;
   padding: 17px 19px;
@@ -1224,6 +1219,104 @@
   letter-spacing: 0.07em;
 }
 
+.mission-pilot-page { width: min(1120px, 100%); }
+.mission-pilot-page .reference-page-heading { margin-bottom: 18px; }
+.avatar-editor-shell { width: 100%; }
+.avatar-editor-card {
+  display: grid;
+  width: 100%;
+  max-width: 1080px;
+  grid-template-columns: minmax(210px, 270px) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(18px, 3vw, 30px);
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 30px);
+  border: 2px solid rgba(115, 217, 255, 0.32);
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 0 0, rgba(157, 78, 221, 0.16), transparent 58%),
+    linear-gradient(145deg, rgba(12, 27, 67, 0.97), rgba(6, 12, 36, 0.98));
+}
+.avatar-editor-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  padding: 22px 14px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.12), rgba(5, 15, 44, 0.58) 72%);
+}
+.avatar-editor-portrait { padding: 8px; border: 3px dashed rgba(0, 240, 255, 0.5); border-radius: 50%; }
+.avatar-editor-preview__label { color: var(--reference-cream); font-size: 15px; }
+.avatar-editor-random {
+  padding: 7px 14px;
+  color: var(--reference-cyan);
+  border: 2px solid var(--reference-cyan);
+  border-radius: 16px;
+  background: rgba(0, 240, 255, 0.1);
+  cursor: pointer;
+  font: 400 14px "Lilita One", sans-serif;
+}
+.avatar-editor-options { display: grid; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 22px; }
+.avatar-editor-field { display: flex; min-width: 0; flex-direction: column; gap: 8px; }
+.avatar-editor-field:first-child,
+.avatar-editor-actions,
+.avatar-save-message { grid-column: 1 / -1; }
+.avatar-editor-label { color: var(--reference-cream); font: 400 13px "Lilita One", sans-serif; letter-spacing: 1px; }
+.avatar-editor-callsign {
+  width: 100%;
+  padding: 9px 12px;
+  color: #f8fafc;
+  border: 2px solid #475569;
+  border-radius: 12px;
+  outline: none;
+  background: rgba(15, 23, 42, 0.85);
+  font: 14px "Space Grotesk", sans-serif;
+}
+.avatar-editor-callsign:focus-visible,
+.avatar-editor-random:focus-visible,
+.avatar-editor-pilot-types button:focus-visible,
+.avatar-editor-options button:focus-visible {
+  outline: 2px solid var(--reference-gold);
+  outline-offset: 3px;
+}
+.avatar-editor-pilot-types { display: flex; gap: 8px; }
+.avatar-editor-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
+.avatar-editor-save { flex: 1; min-height: 42px; padding: 8px; cursor: pointer; }
+.avatar-editor-cancel {
+  padding: 8px 18px;
+  color: #cbd5e1;
+  border: 2px solid #475569;
+  border-radius: 28px;
+  background: transparent;
+  cursor: pointer;
+  font: 400 14px "Lilita One", sans-serif;
+}
+.avatar-save-message { margin: 0; }
+.avatar-save-message--success { color: #9ff7c8; border-color: rgba(115, 255, 190, 0.4); background: rgba(15, 118, 110, 0.2); }
+
+@media (min-width: 701px) and (max-width: 900px) {
+  .topbar.tl-header { gap: 8px; padding-inline: 10px; }
+  .topbar-nav.tl-nav { gap: 2px; padding: 3px; }
+  .topbar-nav.tl-nav button { gap: 4px; padding-inline: 5px; }
+}
+
+@media (max-width: 700px) {
+  .topbar-nav.tl-nav button { min-width: 0; }
+  .topbar-nav.tl-nav .tl-nav-label { white-space: normal; text-align: center; line-height: 1.05; }
+  .avatar-editor-card { grid-template-columns: minmax(0, 1fr); }
+  .avatar-editor-preview { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .avatar-editor-preview__label { flex-basis: 100%; text-align: center; }
+}
+
+@media (max-width: 420px) {
+  .avatar-editor-options { grid-template-columns: minmax(0, 1fr); }
+  .avatar-editor-field:first-child,
+  .avatar-editor-actions,
+  .avatar-save-message { grid-column: auto; }
+  .avatar-editor-preview { flex-direction: column; }
+}
 .arcade-storage-message {
   padding: 11px 14px;
   color: #ffe4e6;

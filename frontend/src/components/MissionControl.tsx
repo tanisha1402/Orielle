@@ -18,7 +18,8 @@ import {
   touchLocalStreak,
 } from "../gamification/localGameState";
 import type { Mission, MissionTask, PlayerProgress } from "../gamification/api";
-import { PilotProfile } from "./PilotProfile";
+import { loadAvatar, PilotAvatar } from "./Avatar";
+import { loadPilotCallsign } from "./PilotProfile";
 
 interface MissionControlProps {
   mission: Mission;
@@ -123,7 +124,11 @@ export function MissionControl({
             <span className="pilot-radar-crosshair pilot-radar-crosshair--horizontal" />
             <span className="pilot-radar-crosshair pilot-radar-crosshair--vertical" />
             <span className="pilot-radar-sweep" />
-            <PilotProfile />
+            <div className="pilot-radar-profile">
+              <PilotAvatar cfg={loadAvatar()} size={66} ring />
+              <span>MISSION PILOT</span>
+              <strong>{loadPilotCallsign()}</strong>
+            </div>
           </div>
           <div className="pilot-rank">
             <span><Award size={14} /> CURRENT RANK</span>
