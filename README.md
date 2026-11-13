@@ -606,7 +606,6 @@ TERRALENS brings together real satellite observations, geospatial processing, in
 
 The current implementation focuses on Sentinel-1 SAR analysis and the Jamuna River study area. The processing threshold remains an initial heuristic, and water extent changes are interpreted as observed satellite classifications.
 
-No root `LICENSE` file is currently present.
 
 ---
 
@@ -617,3 +616,10 @@ No root `LICENSE` file is currently present.
 **TERRALENS — Your planet. Your mission.**
 
 </div>
+
+---
+
+## License
+
+TERRALENS is licensed under the Apache License 2.0.
+See the [LICENSE](LICENSE) file for details.
