@@ -1,0 +1,1359 @@
+:root {
+  font-family: "Space Grotesk", sans-serif;
+  color: #f1f5f9;
+  --reference-cream: #fdf5cc;
+  --reference-cream-dark: #ebc276;
+  --reference-navy: #0b0d26;
+  --reference-blue: #1f85e0;
+  --reference-cyan: #00f0ff;
+  --reference-coral: #ff4365;
+  --reference-amber: #ff9e25;
+  --reference-gold: #ffd166;
+  --reference-purple: #9d4edd;
+  --reference-mint: #73ffbe;
+  --reference-panel: rgba(8, 17, 43, 0.88);
+}
+
+.cosmic-background {
+  background:
+    radial-gradient(ellipse 75% 42% at 50% 119%, rgba(19, 52, 94, 0.92) 57%, transparent 58%),
+    radial-gradient(ellipse 76% 44% at 50% 119%, transparent 55%, rgba(115, 217, 255, 0.48) 56%, rgba(0, 240, 255, 0.15) 57%, transparent 60%),
+    radial-gradient(ellipse at 50% 112%, rgba(0, 240, 255, 0.2), transparent 58%),
+    radial-gradient(ellipse at 14% 22%, rgba(157, 78, 221, 0.16), transparent 38%),
+    radial-gradient(ellipse at 87% 14%, rgba(0, 240, 255, 0.09), transparent 34%),
+    linear-gradient(160deg, #040611, #0b0d26 58%, #080d18);
+}
+
+.cosmic-background::before {
+  opacity: 0.62;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #fff 45%, transparent 100%),
+    radial-gradient(1px 1px at 74% 32%, rgba(125, 249, 255, 0.9) 45%, transparent 100%),
+    radial-gradient(1px 1px at 38% 76%, rgba(255, 255, 255, 0.75) 45%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 88% 84%, rgba(255, 209, 102, 0.8) 45%, transparent 100%);
+  background-size: 173px 191px, 239px 227px, 293px 257px, 347px 311px;
+  animation: reference-stars 8s ease-in-out infinite alternate;
+}
+
+@keyframes reference-stars {
+  from { opacity: 0.32; }
+  to { opacity: 0.72; }
+}
+
+.topbar.tl-header {
+  height: 74px;
+  padding: 0 22px;
+  gap: 18px;
+  border-bottom: 4px solid #1d4ed8;
+  background: linear-gradient(180deg, rgba(14, 30, 78, 0.97), rgba(6, 12, 36, 0.96));
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.4), 0 10px 30px rgba(37, 99, 235, 0.22);
+}
+
+.topbar.tl-header::after {
+  position: absolute;
+  right: 0;
+  bottom: -4px;
+  left: 0;
+  height: 3px;
+  content: "";
+  background: linear-gradient(90deg, #ff4365, #ff9e25 25%, #ffd166 50%, #00f0ff 75%, #9d4edd);
+}
+
+.topbar.tl-header .brand-mark {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--reference-cream);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d9fdff, #00f0ff 60%);
+  box-shadow: 0 0 15px #00f0ff;
+  animation: tl-ping 2.2s ease-out infinite;
+}
+
+.topbar.tl-header .brand-mark svg {
+  display: none;
+}
+
+.topbar.tl-header .brand-wordmark {
+  color: var(--reference-cream);
+  font: 400 28px/1 "Bagel Fat One", sans-serif;
+  letter-spacing: 1px;
+  text-shadow: 0 3px 0 #2563eb, 0 6px 14px rgba(37, 99, 235, 0.55);
+}
+
+.topbar.tl-header .brand-wordmark span {
+  color: var(--reference-cyan);
+}
+
+.topbar.tl-header .topbar-context {
+  display: none;
+}
+
+.topbar-nav.tl-nav {
+  gap: 6px;
+  padding: 5px;
+  border: 2px solid rgba(115, 217, 255, 0.28);
+  border-radius: 30px;
+  background: rgba(5, 10, 30, 0.7);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+}
+
+.topbar-nav.tl-nav button,
+.topbar-nav.tl-nav .tl-nav-btn {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  color: #c7d7f0;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  font: 600 12px/1 "Space Grotesk", sans-serif;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.topbar-nav.tl-nav button:hover {
+  color: #fff;
+  background: rgba(0, 240, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.topbar-nav.tl-nav button.active,
+.topbar-nav.tl-nav button.is-active {
+  color: #04121f;
+  background: linear-gradient(135deg, #8dfaff, #00d8f5);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
+}
+
+.topbar-nav.tl-nav button:focus-visible,
+.topbar.tl-header .brand:focus-visible {
+  outline: 2px solid var(--reference-gold);
+  outline-offset: 3px;
+}
+
+.sound-toggle {
+  border-color: rgba(115, 217, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(5, 18, 46, 0.76);
+  color: var(--reference-cyan);
+}
+
+.topbar-status {
+  color: #9fb3cc;
+  font: 700 9px/1 "Chakra Petch", monospace;
+  letter-spacing: 0.08em;
+}
+
+.reference-page {
+  width: min(1320px, 100%);
+  margin: 0 auto;
+  padding: 30px clamp(18px, 3vw, 42px) 48px;
+  color: #f1f5f9;
+  animation: tl-rise 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.reference-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0 0 24px;
+}
+
+.reference-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 8px;
+  color: #73d9ff;
+  font: 700 10px/1.3 "Chakra Petch", monospace;
+  letter-spacing: 0.12em;
+}
+
+.reference-title {
+  margin: 0;
+  color: var(--reference-cream);
+  font: 400 clamp(29px, 4vw, 42px)/1.08 "Bagel Fat One", sans-serif;
+  letter-spacing: 0.03em;
+  text-shadow: 0 3px 0 #2563eb, 0 6px 15px rgba(37, 99, 235, 0.42);
+}
+
+.reference-subtitle {
+  max-width: 720px;
+  margin: 8px 0 0;
+  color: #b8c8dc;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.reference-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 9px 16px;
+  color: #081329;
+  border: 2px solid #ffe68c;
+  border-radius: 24px;
+  background: var(--reference-amber);
+  box-shadow: 0 5px 0 #a84400, 0 9px 18px rgba(255, 158, 37, 0.27);
+  cursor: pointer;
+  font: 400 13px/1 "Lilita One", sans-serif;
+  letter-spacing: 0.055em;
+  text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+.reference-button:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+.reference-button:active:not(:disabled) {
+  box-shadow: 0 2px 0 #a84400;
+  transform: translateY(3px);
+}
+
+.reference-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.reference-button:disabled,
+.reference-button--locked {
+  color: #94a3b8;
+  border-color: #3b4965;
+  background: #19243c;
+  box-shadow: 0 4px 0 #0a1021;
+  cursor: not-allowed;
+}
+
+.reference-button--quiet {
+  color: #c6d6ef;
+  border-color: rgba(115, 217, 255, 0.36);
+  background: rgba(10, 25, 55, 0.84);
+  box-shadow: 0 4px 0 rgba(1, 7, 23, 0.72);
+}
+
+.reference-button--quiet:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(16, 43, 82, 0.95);
+}
+
+.reference-game-card {
+  --card-accent: var(--reference-cyan);
+  position: relative;
+  padding: 21px;
+  border: 3px solid var(--card-accent);
+  border-radius: 23px;
+  background:
+    radial-gradient(ellipse at 12% 0, color-mix(in srgb, var(--card-accent) 15%, transparent), transparent 48%),
+    rgba(8, 17, 43, 0.88);
+  box-shadow: 0 7px 0 rgba(0, 0, 0, 0.42), 0 0 25px color-mix(in srgb, var(--card-accent) 26%, transparent);
+  backdrop-filter: blur(14px);
+  animation: tl-rise 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.reference-game-card--cyan { --card-accent: #00f0ff; }
+.reference-game-card--gold { --card-accent: #ffd166; }
+.reference-game-card--purple { --card-accent: #9d4edd; }
+.reference-game-card--amber { --card-accent: #ff9e25; }
+.reference-game-card--mint { --card-accent: #73ffbe; }
+
+.reference-sticker,
+.mission-level-sticker,
+.level-sticker {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 5px 12px;
+  color: #081329;
+  border: 2px solid var(--reference-cream);
+  border-radius: 14px;
+  background: var(--reference-amber);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+  font: 400 11px/1 "Lilita One", sans-serif;
+  letter-spacing: 0.07em;
+  transform: rotate(2deg);
+}
+
+.mission-hub.reference-page {
+  width: min(1420px, 100%);
+}
+
+.mission-control-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.mission-hub-layout {
+  display: grid;
+  grid-template-columns: minmax(245px, 300px) minmax(0, 1fr);
+  align-items: start;
+  gap: 23px;
+}
+
+.pilot-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 0;
+  text-align: center;
+}
+
+.pilot-dossier__label {
+  color: #cbd5e1;
+  font: 700 10px/1.2 "Chakra Petch", monospace;
+  letter-spacing: 0.1em;
+  text-align: left;
+}
+
+.pilot-radar-frame {
+  position: relative;
+  display: grid;
+  width: 164px;
+  height: 164px;
+  place-items: center;
+  align-self: center;
+  border: 1px solid rgba(0, 240, 255, 0.42);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.09), rgba(5, 15, 44, 0.25) 69%);
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.16), inset 0 0 18px rgba(0, 240, 255, 0.08);
+}
+
+.pilot-radar-profile {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+}
+
+.pilot-radar-profile > span {
+  color: #73d9ff;
+  font: 700 8px/1.2 "Chakra Petch", monospace;
+}
+
+.pilot-radar-profile > strong {
+  max-width: 140px;
+  overflow: hidden;
+  color: var(--reference-cream);
+  font: 400 15px/1.2 "Lilita One", sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pilot-radar-profile > svg { width: 66px; height: 66px; }
+
+.pilot-radar-ring {
+  position: absolute;
+  border: 1px solid rgba(0, 240, 255, 0.28);
+  border-radius: 50%;
+}
+
+.pilot-radar-ring--outer { inset: 12px; }
+.pilot-radar-ring--middle { inset: 33px; border-style: dashed; }
+
+.pilot-radar-crosshair {
+  position: absolute;
+  background: rgba(0, 240, 255, 0.28);
+}
+
+.pilot-radar-crosshair--horizontal { width: 100%; height: 1px; }
+.pilot-radar-crosshair--vertical { width: 1px; height: 100%; }
+
+.pilot-radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg 286deg, rgba(115, 255, 190, 0.48) 360deg);
+  animation: tl-spin 3.2s linear infinite;
+}
+
+.pilot-rank {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+}
+
+.pilot-rank > span,
+.pilot-xp-progress > div:first-child > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #73d9ff;
+  font: 700 9px/1.4 "Chakra Petch", monospace;
+  letter-spacing: 0.08em;
+}
+
+.pilot-rank strong {
+  color: var(--reference-gold);
+  font: 400 20px/1.15 "Lilita One", sans-serif;
+  text-shadow: 0 2px 0 #653a14;
+}
+
+.pilot-xp-progress {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  text-align: left;
+}
+
+.pilot-xp-progress > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pilot-xp-progress > div:first-child strong {
+  color: var(--reference-cream);
+  font: 700 13px/1 "Chakra Petch", monospace;
+}
+
+.pilot-xp-progress small {
+  color: #a9bad1;
+  font: 9px/1.3 "Chakra Petch", monospace;
+  text-align: right;
+}
+
+.pilot-xp-track {
+  grid-column: 1 / -1;
+  height: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(115, 217, 255, 0.22);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.pilot-xp-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #00f0ff, #9d4edd, #ffd166);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  transition: width 450ms ease;
+}
+
+.pilot-mini-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.pilot-mini-stats > div {
+  display: grid;
+  grid-template-columns: 21px 1fr;
+  justify-content: center;
+  align-items: center;
+  padding: 9px;
+  border: 1px solid rgba(115, 217, 255, 0.17);
+  border-radius: 11px;
+  background: rgba(5, 13, 35, 0.65);
+  text-align: left;
+}
+
+.pilot-mini-stats svg,
+.pilot-coin { color: #ff9e25; }
+.pilot-mini-stats strong { color: var(--reference-cream); font: 700 14px "Chakra Petch", monospace; }
+.pilot-mini-stats span:last-child { grid-column: 1 / -1; color: #92a4bc; font: 8px "Chakra Petch", monospace; }
+
+.pilot-achievements > div {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.pilot-achievements > div > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 8px;
+  color: #64748b;
+  border: 1px solid rgba(100, 116, 139, 0.18);
+  border-radius: 9px;
+  background: rgba(5, 13, 35, 0.45);
+  font: 700 8px "Chakra Petch", monospace;
+  letter-spacing: 0.06em;
+}
+
+.pilot-achievements > div > span.is-earned {
+  color: var(--reference-gold);
+  border-color: rgba(255, 209, 102, 0.33);
+  background: rgba(255, 209, 102, 0.07);
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.08);
+}
+
+.mission-selection { min-width: 0; }
+.mission-selection__heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 14px; }
+.mission-selection__heading .reference-eyebrow { margin-bottom: 4px; }
+.mission-selection__heading h2 { margin: 0; color: var(--reference-cream); font: 400 clamp(18px, 2.3vw, 25px)/1.2 "Lilita One", sans-serif; text-shadow: 0 2px 0 #1d4ed8; }
+.mission-level-sticker { color: #fff; background: var(--reference-coral); }
+
+.reference-mission-card {
+  --mission-x: 0deg;
+  position: relative;
+  padding: clamp(16px, 2vw, 24px);
+  overflow: hidden;
+  border: 2px solid rgba(0, 240, 255, 0.7);
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 85% 0, rgba(0, 240, 255, 0.12), transparent 35%),
+    linear-gradient(145deg, rgba(9, 22, 52, 0.97), rgba(7, 12, 35, 0.96));
+  box-shadow: 0 0 28px rgba(0, 240, 255, 0.21), inset 0 0 25px rgba(0, 240, 255, 0.04);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.reference-mission-card:hover {
+  box-shadow: 0 0 34px rgba(0, 240, 255, 0.3), inset 0 0 25px rgba(0, 240, 255, 0.055);
+}
+
+.reference-mission-card__header {
+  display: grid;
+  grid-template-columns: 51px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.reference-mission-card__header .reference-eyebrow { margin-bottom: 3px; }
+.reference-mission-card__header h3 { margin: 0; color: #fff; font: 400 22px/1.18 "Lilita One", sans-serif; text-shadow: 0 2px 0 #1d4ed8; }
+.reference-mission-card__header p { margin: 4px 0 0; color: #b3c5dc; font-size: 11px; }
+
+.mission-level-emblem {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  color: #06112a;
+  border: 3px solid var(--reference-cream);
+  border-radius: 15px;
+  background: linear-gradient(145deg, #73ffbe, #00b8ed);
+  box-shadow: 0 4px 0 #1260ae, 0 0 16px rgba(0, 240, 255, 0.3);
+  font: 400 24px "Bagel Fat One", sans-serif;
+  transform: rotate(-4deg);
+}
+
+.simulation-sticker {
+  padding: 6px 9px;
+  color: #072032;
+  border: 2px solid var(--reference-cream);
+  border-radius: 10px;
+  background: var(--reference-mint);
+  font: 400 9px "Lilita One", sans-serif;
+  letter-spacing: 0.08em;
+  transform: rotate(3deg);
+}
+
+.mission-hero-art {
+  position: relative;
+  display: grid;
+  min-height: 124px;
+  place-items: center;
+  margin: 17px 0 14px;
+  overflow: hidden;
+  border: 1px solid rgba(115, 217, 255, 0.27);
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.13), transparent 42%),
+    repeating-linear-gradient(0deg, transparent 0 17px, rgba(0, 240, 255, 0.06) 18px),
+    repeating-linear-gradient(90deg, transparent 0 17px, rgba(0, 240, 255, 0.06) 18px),
+    #07152f;
+}
+
+.mission-hero-orbit {
+  position: absolute;
+  width: 142px;
+  height: 75px;
+  border: 1px solid rgba(115, 217, 255, 0.36);
+  border-radius: 50%;
+}
+
+.mission-hero-orbit--one { transform: rotate(-24deg); }
+.mission-hero-orbit--two { width: 92px; height: 92px; border-style: dashed; }
+.mission-hero-sweep {
+  position: absolute;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg 290deg, rgba(115, 255, 190, 0.3) 360deg);
+  animation: tl-spin 4s linear infinite;
+}
+.mission-hero-blip { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: #ffd166; box-shadow: 0 0 12px #ffd166; animation: tl-flame 1.5s ease-in-out infinite; }
+.mission-hero-blip--one { transform: translate(35px, -15px); }
+.mission-hero-blip--two { width: 5px; height: 5px; transform: translate(-45px, 20px); animation-delay: 400ms; }
+.mission-hero-label { position: absolute; right: 12px; bottom: 10px; color: #89a9c5; font: 8px "Chakra Petch", monospace; letter-spacing: 0.1em; }
+
+.mission-progress-heading { display: flex; justify-content: space-between; gap: 12px; margin: 5px 1px; color: #aabbd1; font: 700 9px "Chakra Petch", monospace; letter-spacing: 0.08em; }
+.mission-progress-heading strong { color: var(--reference-gold); }
+.reference-progress-track { height: 8px; overflow: hidden; border: 1px solid rgba(115, 217, 255, 0.24); border-radius: 8px; background: rgba(4, 9, 24, 0.9); }
+.reference-progress-track > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #00f0ff, #9d4edd, #ffd166); box-shadow: 0 0 11px rgba(0, 240, 255, 0.6); transition: width 500ms ease; }
+
+.challenge-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin-top: 14px; }
+.challenge-card {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px 10px;
+  padding: 12px;
+  color: #edf5ff;
+  border: 1px solid rgba(115, 217, 255, 0.2);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(12, 28, 60, 0.96), rgba(8, 16, 40, 0.92));
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.challenge-card:nth-child(4n + 2) { border-color: rgba(255, 158, 37, 0.42); }
+.challenge-card:nth-child(4n + 3) { border-color: rgba(157, 78, 221, 0.42); }
+.challenge-card:nth-child(4n + 4) { border-color: rgba(255, 67, 101, 0.38); }
+.challenge-card:hover:not(:disabled) { z-index: 1; border-color: var(--reference-cyan); box-shadow: 0 6px 0 rgba(0, 0, 0, 0.32), 0 0 20px rgba(0, 240, 255, 0.19); transform: translateY(-3px) scale(1.015); }
+.challenge-card:focus-visible { outline: 2px solid var(--reference-gold); outline-offset: 3px; }
+.challenge-card:disabled { opacity: 0.56; cursor: not-allowed; }
+.challenge-card.is-complete { border-color: rgba(255, 209, 102, 0.6); background: linear-gradient(145deg, rgba(58, 43, 31, 0.63), rgba(13, 22, 43, 0.95)); }
+.challenge-card__top { display: flex; grid-column: 1 / -1; align-items: center; justify-content: space-between; color: #73d9ff; }
+.challenge-card__number { display: grid; width: 29px; height: 26px; place-items: center; color: #06112a; border: 2px solid var(--reference-cream); border-radius: 9px; background: #73d9ff; box-shadow: 0 3px 0 #1260ae; font: 400 12px "Lilita One", sans-serif; }
+.challenge-card__art { position: relative; display: grid; width: 42px; height: 42px; grid-column: 1 / -1; place-items: center; overflow: hidden; border: 1px solid rgba(115, 217, 255, 0.22); border-radius: 50%; background: radial-gradient(circle, rgba(0, 240, 255, 0.19), rgba(6, 15, 36, 0.78)); }
+.challenge-card__art-ring { width: 30px; height: 30px; border: 1px dashed rgba(115, 217, 255, 0.68); border-radius: 50%; }
+.challenge-card__art-core { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--reference-gold); box-shadow: 0 0 9px var(--reference-gold); }
+.challenge-card strong { grid-column: 1 / -1; min-height: 34px; color: var(--reference-cream); font: 400 15px/1.15 "Lilita One", sans-serif; }
+.challenge-card__reward { color: #73ffbe; font: 700 8px "Chakra Petch", monospace; letter-spacing: 0.06em; }
+.challenge-card.is-complete .challenge-card__reward { color: var(--reference-gold); }
+.challenge-card__no-xp { color: #f8c56d; font: 700 8px "Chakra Petch", monospace; text-align: right; }
+
+.reference-mission-card__footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 15px; padding-top: 13px; border-top: 1px solid rgba(115, 217, 255, 0.16); color: #a8bbd2; font: 700 9px "Chakra Petch", monospace; }
+.reference-mission-card__footer > span:first-child { display: inline-flex; align-items: center; gap: 6px; color: #73ffbe; }
+.mission-complete-badge { display: inline-flex; align-items: center; gap: 6px; color: var(--reference-gold); }
+
+.arcade-wallet { display: flex; align-items: center; gap: 9px; padding: 11px 16px; color: #75f8ff; border: 2px solid rgba(0, 240, 255, 0.38); border-radius: 30px; background: rgba(5, 18, 46, 0.82); font-family: "Chakra Petch", monospace; }
+.arcade-wallet strong { color: var(--reference-gold); font-size: 19px; }
+.arcade-wallet span { font-size: 9px; font-weight: 700; }
+.arcade-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(250px, 0.75fr); align-items: start; gap: 20px; }
+.arcade-games { display: grid; gap: 18px; }
+.reference-game-card--cyan,
+.reference-game-card--amber { display: flex; flex-direction: column; gap: 12px; }
+.reference-game-card__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.arcade-best { display: inline-flex; align-items: center; gap: 5px; color: var(--reference-gold); font: 700 9px "Chakra Petch", monospace; }
+.reference-game-card h2 { margin: 1px 0 0; color: var(--reference-cream); font: 400 25px/1 "Lilita One", sans-serif; text-shadow: 0 2px 0 #1d4ed8; }
+.reference-game-card > p { margin: 0; color: #d0daea; font-size: 12px; line-height: 1.55; }
+.training-label { width: fit-content; padding: 4px 7px; color: #73d9ff; border: 1px solid rgba(115, 217, 255, 0.25); border-radius: 6px; background: rgba(0, 240, 255, 0.05); font: 700 8px "Chakra Petch", monospace; letter-spacing: 0.1em; }
+.arcade-pattern-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.arcade-pattern-choice { display: grid; gap: 8px; padding: 8px; color: #d9e8f7; border: 2px solid rgba(115, 217, 255, 0.25); border-radius: 13px; background: rgba(5, 13, 35, 0.75); cursor: pointer; font: 700 10px "Chakra Petch", monospace; letter-spacing: 0.08em; transition: transform 140ms ease, border-color 140ms ease; }
+.arcade-pattern-choice:hover:not(:disabled) { border-color: var(--reference-cyan); transform: translateY(-2px); }
+.arcade-pattern-choice.is-correct { border-color: #73ffbe; box-shadow: 0 0 16px rgba(115, 255, 190, 0.18); }
+.arcade-pattern-choice.is-other { opacity: 0.55; }
+.arcade-pattern-choice small { color: #ffd166; font-size: 8px; }
+.arcade-schematic { position: relative; display: block; height: 132px; overflow: hidden; border: 1px solid rgba(115, 217, 255, 0.16); border-radius: 9px; background-color: #09132e; }
+.arcade-schematic--low { background-image: linear-gradient(rgba(7, 19, 42, 0.18), rgba(7, 19, 42, 0.18)), repeating-linear-gradient(0deg, transparent 0 13px, rgba(115, 217, 255, 0.07) 14px), repeating-linear-gradient(90deg, transparent 0 13px, rgba(115, 217, 255, 0.07) 14px), linear-gradient(145deg, #061129, #10243d); }
+.arcade-schematic--high { background-image: repeating-linear-gradient(135deg, rgba(255, 209, 102, 0.14) 0 2px, transparent 2px 8px), repeating-linear-gradient(45deg, transparent 0 9px, rgba(115, 217, 255, 0.09) 10px), linear-gradient(145deg, #182143, #0a1630); }
+.arcade-schematic i { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: rgba(125, 249, 255, 0.56); box-shadow: 0 0 6px rgba(0, 240, 255, 0.35); }
+.arcade-schematic--high i:nth-of-type(3n) { width: 7px; height: 7px; background: #ffd166; box-shadow: 0 0 10px rgba(255, 209, 102, 0.58); }
+.arcade-schematic__scan { position: absolute; z-index: 1; right: 0; left: 0; top: -25px; height: 27px; background: linear-gradient(transparent, rgba(0, 240, 255, 0.05), rgba(0, 240, 255, 0.5)); animation: reference-scan 2.8s linear infinite; }
+@keyframes reference-scan { to { transform: translateY(180px); } }
+.arcade-round-track { display: flex; align-items: center; gap: 5px; }
+.arcade-round-track span { display: grid; width: 24px; height: 24px; place-items: center; color: #95a7be; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 50%; background: #17213a; font: 700 9px "Chakra Petch", monospace; }
+.arcade-round-track span.is-current { color: #10152a; border-color: var(--reference-cream); background: var(--reference-gold); }
+.arcade-round-track span.is-done { color: #05142a; border-color: #73ffbe; background: #73ffbe; }
+.arcade-round-track b { margin-left: auto; color: var(--reference-gold); font: 400 18px "Lilita One", sans-serif; }
+.arcade-prompt { color: #f5eac5 !important; font: 400 15px/1.35 "Lilita One", sans-serif !important; }
+.arcade-feedback { display: grid; gap: 7px; padding-top: 8px; }
+.arcade-feedback > span { color: #73ffbe; font: 400 18px "Lilita One", sans-serif; }
+.arcade-feedback p { margin: 0; color: #aebdd0; font-size: 10px; line-height: 1.5; }
+.arcade-feedback .reference-button { justify-self: end; }
+.arcade-finish { display: grid; justify-items: center; gap: 8px; padding: 16px; text-align: center; }
+.arcade-finish strong { color: var(--reference-cream); font: 400 44px/1 "Bagel Fat One", sans-serif; text-shadow: 0 3px 0 #2563eb; }
+.arcade-finish p { margin: 0 0 6px; color: #cad7e8; font-size: 12px; }
+.arcade-sidebar { display: grid; gap: 17px; }
+.reference-streak-card { display: grid; justify-items: center; gap: 9px; padding: 22px; border: 3px solid var(--reference-coral); border-radius: 23px; background: radial-gradient(ellipse at 50% 0, rgba(255, 67, 101, 0.18), transparent 56%), rgba(8, 17, 43, 0.88); box-shadow: 0 7px 0 rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 67, 101, 0.18); text-align: center; }
+.reference-flame { color: #ff9e25; animation: tl-flame 1.6s ease-in-out infinite; }
+.reference-streak-card > strong { color: var(--reference-cream); font: 400 23px "Bagel Fat One", sans-serif; text-shadow: 0 3px 0 #c2410c; }
+.reference-streak-card small { color: #aebdd0; font-size: 10px; }
+.streak-dots { display: flex; gap: 6px; }
+.streak-dots span { display: grid; width: 22px; height: 22px; place-items: center; color: #091329; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; background: #1e293b; font-size: 10px; }
+.streak-dots span.is-lit { background: var(--reference-amber); box-shadow: 0 0 10px rgba(255, 158, 37, 0.4); }
+.reference-score-card { padding: 17px; border: 2px solid rgba(255, 209, 102, 0.45); border-radius: 19px; background: rgba(8, 17, 43, 0.86); box-shadow: 0 5px 0 rgba(0, 0, 0, 0.32); }
+.reference-score-card h2 { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--reference-cream); font: 400 18px "Lilita One", sans-serif; }
+.reference-score-card h2 svg { color: var(--reference-gold); }
+.reference-score-card > p { margin: 6px 0 13px; color: #91a4bc; font-size: 9px; line-height: 1.5; }
+.score-row { display: flex; justify-content: space-between; gap: 8px; padding: 9px 0; border-top: 1px solid rgba(115, 217, 255, 0.12); color: #cbd5e1; font-size: 10px; }
+.score-row strong { color: #73ffbe; font: 700 10px "Chakra Petch", monospace; }
+.arcade-note { display: flex; align-items: flex-start; gap: 10px; border-color: rgba(157, 78, 221, 0.45); }
+.arcade-note svg { flex: 0 0 auto; color: #c084fc; }
+.arcade-note p { margin: 0; }
+.speed-round { display: grid; gap: 11px; }
+.speed-timer { display: flex; align-items: center; gap: 7px; color: var(--reference-gold); font: 400 22px "Lilita One", sans-serif; }
+.speed-timer.is-low { color: #ff6b84; animation: tl-flame 550ms ease-in-out infinite; }
+.speed-timer span { margin-left: auto; color: #73ffbe; font: 700 11px "Chakra Petch", monospace; }
+.speed-options { display: grid; gap: 7px; }
+.speed-options button { display: flex; align-items: center; gap: 8px; padding: 9px 10px; color: #d5e0ef; border: 1px solid rgba(115, 217, 255, 0.2); border-radius: 9px; background: rgba(5, 13, 35, 0.75); cursor: pointer; text-align: left; font-size: 10px; transition: border-color 120ms ease, background 120ms ease; }
+.speed-options button:hover:not(:disabled) { border-color: #00f0ff; background: rgba(0, 240, 255, 0.08); }
+.speed-options button > span { display: grid; width: 22px; height: 22px; flex: 0 0 auto; place-items: center; color: #04121f; border-radius: 6px; background: #73d9ff; font: 700 10px "Chakra Petch", monospace; }
+.speed-options button.is-correct { border-color: #73ffbe; background: rgba(115, 255, 190, 0.11); }
+.speed-options button.is-wrong { border-color: #ff4365; background: rgba(255, 67, 101, 0.1); }
+.speed-combo { display: flex; align-items: center; gap: 5px; color: #ff9e25; font: 700 9px "Chakra Petch", monospace; }
+
+.journal-page { width: min(1120px, 100%); }
+.journal-heading { margin-top: 8px; }
+.certificate-open { white-space: nowrap; }
+.journal-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.journal-stat-card { display: grid; gap: 5px; min-width: 0; padding: 15px; border: 2px solid var(--stat-accent); border-radius: 16px; background: linear-gradient(145deg, color-mix(in srgb, var(--stat-accent) 10%, rgba(8, 17, 43, 0.9)), rgba(8, 17, 43, 0.9)); box-shadow: 0 5px 0 rgba(0, 0, 0, 0.31), 0 0 17px color-mix(in srgb, var(--stat-accent) 12%, transparent); }
+.journal-stat-card span { color: #aabbd1; font: 700 9px "Chakra Petch", monospace; letter-spacing: 0.08em; }
+.journal-stat-card strong { overflow: hidden; color: var(--stat-accent); font: 400 clamp(16px, 2vw, 22px)/1.15 "Lilita One", sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.journal-stat-card--cyan { --stat-accent: #73d9ff; }
+.journal-stat-card--gold { --stat-accent: #ffd166; }
+.journal-stat-card--mint { --stat-accent: #73ffbe; }
+.journal-stat-card--purple { --stat-accent: #c084fc; }
+.journal-progress-card { padding: 18px; border: 2px solid rgba(0, 240, 255, 0.35); border-radius: 19px; background: rgba(8, 17, 43, 0.85); box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3); }
+.journal-progress-card__heading { display: flex; align-items: center; gap: 12px; }
+.journal-progress-card__heading .reference-eyebrow { margin: 0 0 3px; font-size: 8px; }
+.journal-progress-card__heading h2 { margin: 0; color: var(--reference-cream); font: 400 19px "Lilita One", sans-serif; }
+.journal-progress-card__heading .level-sticker { background: #ff4365; color: white; }
+.achievement-earned { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; color: var(--reference-gold); font: 700 9px "Chakra Petch", monospace; }
+.journal-task-progress { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 15px; }
+.journal-task-progress span { display: flex; align-items: center; gap: 7px; min-width: 0; padding: 9px; color: #7889a1; border: 1px solid rgba(115, 217, 255, 0.14); border-radius: 9px; background: rgba(5, 13, 35, 0.62); font: 700 8px "Chakra Petch", monospace; }
+.journal-task-progress span.is-complete { color: #73ffbe; border-color: rgba(115, 255, 190, 0.32); }
+.journal-certificate-progress { margin: 10px 0 0; color: #91a4bc; font-size: 9px; }
+.journal-logs-section { margin: 24px 0; }
+.journal-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+.journal-section-heading .reference-eyebrow { margin: 0 0 3px; }
+.journal-section-heading h2 { margin: 0; color: var(--reference-cream); font: 400 20px "Lilita One", sans-serif; }
+.journal-section-heading > span { color: #8fa3bd; font: 700 9px "Chakra Petch", monospace; }
+.journal-empty { display: grid; justify-items: center; gap: 7px; padding: 28px; color: #9fb1c8; border: 1px dashed rgba(115, 217, 255, 0.28); border-radius: 17px; background: rgba(8, 17, 43, 0.64); text-align: center; }
+.journal-empty svg { color: #73d9ff; }
+.journal-empty strong { color: var(--reference-cream); font: 400 16px "Lilita One", sans-serif; }
+.journal-empty p { margin: 0; font-size: 10px; }
+.journal-list { display: grid; gap: 9px; }
+.reference-log-entry { padding: 14px; border: 1px solid rgba(115, 217, 255, 0.2); border-radius: 14px; background: rgba(8, 17, 43, 0.84); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25); }
+.reference-log-entry.is-correct { border-left: 4px solid #73ffbe; }
+.reference-log-entry.is-learning { border-left: 4px solid #ffb84d; }
+.reference-log-entry .journal-entry-heading h3 { margin: 4px 0 0; color: #f2e8c3; font: 400 15px "Lilita One", sans-serif; }
+.reference-log-entry .journal-entry-heading time { color: #889bb4; font: 9px "Chakra Petch", monospace; }
+.journal-result-tag { padding: 4px 7px; color: #ffcf8a; border: 1px solid rgba(255, 184, 77, 0.35); border-radius: 6px; font: 700 8px "Chakra Petch", monospace; }
+.journal-result-tag.is-correct { color: #73ffbe; border-color: rgba(115, 255, 190, 0.35); }
+.reference-log-entry .journal-answer { color: #a9bacf; font-size: 10px; }
+.reference-log-entry .journal-explanation { color: #b4c3d6; font-size: 10px; line-height: 1.55; }
+
+.journal-memories { margin: 24px 0; }
+.journal-section-heading > span { text-align: right; }
+.memory-composer { display: grid; gap: 10px; padding: 17px; border: 2px solid rgba(249, 168, 212, 0.48); border-radius: 18px; background: linear-gradient(145deg, rgba(51, 26, 66, 0.38), rgba(8, 17, 43, 0.93)); box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3); }
+.memory-composer label { display: grid; gap: 5px; color: #e7bce1; font: 700 8px "Chakra Petch", monospace; letter-spacing: 0.08em; }
+.memory-composer input,
+.memory-composer textarea { width: 100%; padding: 10px 12px; color: #f1f5f9; border: 1px solid rgba(115, 217, 255, 0.25); border-radius: 10px; outline: none; background: rgba(5, 10, 28, 0.78); font: 12px "Space Grotesk", sans-serif; }
+.memory-composer input:focus,
+.memory-composer textarea:focus { border-color: #73d9ff; box-shadow: 0 0 0 2px rgba(115, 217, 255, 0.13); }
+.memory-composer textarea { resize: vertical; }
+.memory-composer__footer { display: flex; align-items: center; gap: 10px; }
+.memory-stickers { display: flex; flex-wrap: wrap; gap: 5px; }
+.memory-stickers button { display: grid; width: 31px; height: 31px; place-items: center; border: 1px solid rgba(115, 217, 255, 0.2); border-radius: 50%; background: rgba(5, 13, 35, 0.8); cursor: pointer; font-size: 15px; transition: transform 120ms ease, border-color 120ms ease; }
+.memory-stickers button:hover,
+.memory-stickers button.is-selected { border-color: #f9a8d4; background: rgba(249, 168, 212, 0.17); transform: scale(1.1); }
+.memory-stickers button:focus-visible { outline: 2px solid var(--reference-gold); outline-offset: 2px; }
+.memory-counter { margin-left: auto; color: #8294aa; font: 9px "Chakra Petch", monospace; }
+.memory-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.memory-actions .reference-button { min-height: 34px; padding: 7px 12px; font-size: 10px; }
+.memory-actions .memory-save { margin-left: auto; }
+.memory-photo-preview { width: 48px; height: 38px; border: 2px solid var(--reference-cream); border-radius: 7px; object-fit: cover; }
+.memory-remove-photo { color: #c8d6e7; border: 0; background: transparent; cursor: pointer; font-size: 9px; text-decoration: underline; }
+.memory-message { margin: 0; color: #ffb4a8; font-size: 10px; }
+.memory-empty { padding: 20px; color: #a1b3c8; border: 1px dashed rgba(249, 168, 212, 0.24); border-radius: 13px; text-align: center; font-size: 10px; }
+.memory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 19px; padding: 8px 5px; }
+.memory-note { position: relative; display: flex; min-height: 150px; flex-direction: column; gap: 7px; padding: 20px 14px 14px; border-radius: 4px 4px 13px 4px; box-shadow: 0 7px 0 rgba(0, 0, 0, 0.3), 0 13px 22px rgba(0, 0, 0, 0.3); color: #0b0d26; animation: tl-rise 430ms cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: transform 160ms ease; }
+.memory-note:hover { z-index: 1; transform: rotate(0) translateY(-4px) scale(1.025) !important; }
+.memory-note__sticker { position: absolute; top: -15px; left: 50%; font-size: 24px; transform: translateX(-50%); }
+.memory-note__delete { position: absolute; top: 5px; right: 5px; display: grid; width: 25px; height: 25px; place-items: center; color: rgba(11, 13, 38, 0.68); border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.27); cursor: pointer; }
+.memory-note__delete:hover { background: rgba(255, 255, 255, 0.55); }
+.memory-note time { margin-top: 3px; color: rgba(11, 13, 38, 0.7); font: 9px "Chakra Petch", monospace; }
+.memory-note h3 { margin: 0; color: #0b0d26; font: 400 16px "Lilita One", sans-serif; }
+.memory-note img { width: 100%; max-height: 160px; border: 3px solid #fff; border-radius: 7px; object-fit: cover; }
+.memory-note p { margin: 0; color: #0b0d26; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-wrap; }
+
+.cosmetic-shop { margin: 22px 0 0; }
+.cosmetic-shop .journal-section-heading { margin-bottom: 4px; }
+.shop-wallet { display: inline-flex; align-items: center; gap: 6px; color: var(--reference-gold); font: 700 10px "Chakra Petch", monospace; }
+.shop-caption { margin: 0 0 13px; color: #9fb1c8; font-size: 9px; line-height: 1.45; }
+.shop-themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.shop-theme { display: grid; justify-items: start; gap: 7px; min-width: 0; padding: 10px; color: #d9e4f2; border: 1px solid color-mix(in srgb, var(--theme-accent) 40%, transparent); border-radius: 12px; background: rgba(5, 13, 35, 0.75); cursor: pointer; text-align: left; transition: transform 130ms ease, box-shadow 130ms ease; }
+.shop-theme:hover { box-shadow: 0 0 14px color-mix(in srgb, var(--theme-accent) 22%, transparent); transform: translateY(-2px); }
+.shop-theme.is-active { border-color: var(--theme-accent); box-shadow: inset 0 0 14px color-mix(in srgb, var(--theme-accent) 11%, transparent); }
+.shop-theme__swatch { width: 31px; height: 31px; border: 2px solid var(--reference-cream); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, var(--theme-accent) 48%, #091329); box-shadow: 0 0 13px color-mix(in srgb, var(--theme-accent) 45%, transparent); }
+.shop-theme strong { color: var(--reference-cream); font: 400 14px "Lilita One", sans-serif; }
+.shop-theme small { display: inline-flex; align-items: center; gap: 4px; color: var(--theme-accent); font: 700 7px "Chakra Petch", monospace; }
+.shop-message { margin: 10px 0 0; color: #9fe8c4; font-size: 9px; }
+
+.certificate-open { position: relative; z-index: 1; }
+.certificate-overlay { position: fixed; z-index: 300; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 24px; background: rgba(2, 5, 18, 0.91); backdrop-filter: blur(10px); }
+.certificate-dialog { position: relative; display: grid; width: min(940px, 100%); justify-items: center; gap: 18px; padding: 25px; border: 2px solid rgba(0, 240, 255, 0.45); border-radius: 22px; background: #081126; box-shadow: 0 0 45px rgba(0, 240, 255, 0.17); }
+.certificate-close { position: absolute; z-index: 2; top: 9px; right: 9px; display: grid; width: 34px; height: 34px; place-items: center; color: #d6e2f2; border: 1px solid rgba(115, 217, 255, 0.2); border-radius: 50%; background: rgba(5, 12, 30, 0.8); cursor: pointer; }
+.certificate-paper { position: relative; display: grid; width: min(100%, 840px); min-height: 480px; place-items: center; overflow: hidden; padding: 38px; color: #122143; border: 8px double #c49a38; outline: 2px solid #16345f; outline-offset: -15px; background: radial-gradient(ellipse at 50% 0, #fffbe7, #f8f2d8 56%, #f1e7c7); box-shadow: 0 13px 30px rgba(0, 0, 0, 0.32); text-align: center; }
+.certificate-paper__content { position: relative; z-index: 1; display: grid; justify-items: center; gap: 8px; max-width: 660px; }
+.certificate-paper__brand { color: #1f5d96; font: 700 10px "Chakra Petch", monospace; letter-spacing: 0.18em; }
+.certificate-paper h1 { margin: 3px 0; color: #142a4f; font: 400 clamp(22px, 4vw, 32px)/1.1 "Bagel Fat One", sans-serif; }
+.certificate-paper__intro { margin: 2px 0 0; color: #455571; font: italic 14px Georgia, serif; }
+.certificate-paper__callsign { color: #1f5d96; border-bottom: 2px solid #c49a38; font: 400 clamp(25px, 5vw, 39px)/1.3 "Lilita One", sans-serif; }
+.certificate-paper__achievement { margin: 4px 0 0; color: #455571; font: 14px Georgia, serif; }
+.certificate-paper h2 { margin: 0; color: #bd7d19; font: 400 21px "Lilita One", sans-serif; letter-spacing: 0.07em; }
+.certificate-paper__seal { display: grid; width: 53px; height: 53px; place-items: center; margin: 4px; color: #fff4cf; border: 3px solid #f4d276; border-radius: 50%; background: linear-gradient(140deg, #1f85e0, #9d4edd); box-shadow: 0 0 0 4px #1f3760, 0 0 0 7px #c49a38; }
+.certificate-paper__date { margin: 5px 0 0; color: #455571; font: 12px "Chakra Petch", monospace; }
+.certificate-paper__scope { max-width: 470px; margin: 4px 0; color: #5d6780; font: 10px/1.45 "Space Grotesk", sans-serif; }
+.certificate-paper__serial { color: #73809a; font: 8px "Chakra Petch", monospace; letter-spacing: 0.1em; }
+.certificate-paper__orbit { position: absolute; width: 390px; height: 390px; border: 1px solid rgba(31, 133, 224, 0.1); border-radius: 50%; }
+.certificate-paper__orbit--one { top: -275px; right: -210px; }
+.certificate-paper__orbit--two { bottom: -285px; left: -220px; width: 450px; height: 450px; }
+.certificate-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.certificate-paper--print { display: none; }
+
+.welcome-screen {
+  background:
+    radial-gradient(ellipse 75% 40% at 50% 119%, rgba(19, 52, 94, 0.82) 57%, transparent 58%),
+    radial-gradient(ellipse 76% 42% at 50% 119%, transparent 55%, rgba(115, 217, 255, 0.45) 56%, transparent 60%),
+    radial-gradient(ellipse at 14% 22%, rgba(157, 78, 221, 0.2), transparent 36%),
+    linear-gradient(160deg, #040611, #0b0d26 58%, #080d18);
+}
+
+.welcome-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(1px 1px at 20% 20%, #fff 45%, transparent), radial-gradient(1px 1px at 76% 38%, #73d9ff 45%, transparent), radial-gradient(1.5px 1.5px at 89% 19%, #ffd166 45%, transparent);
+  background-size: 177px 159px, 231px 205px, 337px 287px;
+  opacity: 0.7;
+  animation: reference-stars 7s ease-in-out infinite alternate;
+}
+
+.welcome-screen > * { position: relative; z-index: 1; }
+.welcome-copy h1 { animation: tl-rise 600ms ease-out both; }
+.welcome-launch-button { font-family: "Lilita One", sans-serif; }
+.welcome-radar-art { filter: drop-shadow(0 0 28px rgba(0, 240, 255, 0.15)); }
+.welcome-radar-sweep { background: conic-gradient(from 0deg, transparent 0deg 292deg, rgba(115, 255, 190, 0.55) 360deg); }
+
+@media (max-width: 1120px) {
+  .topbar.tl-header { gap: 11px; padding-inline: 14px; }
+  .topbar-status { display: none; }
+  .topbar-nav.tl-nav { margin-left: auto; }
+  .topbar-nav.tl-nav button { padding-inline: 10px; }
+}
+
+@media (max-width: 900px) {
+  .mission-hub-layout { grid-template-columns: 1fr; }
+  .pilot-dossier { display: grid; grid-template-columns: minmax(135px, 165px) minmax(0, 1fr); align-items: center; text-align: left; }
+  .pilot-dossier__label, .pilot-achievements { grid-column: 1 / -1; }
+  .pilot-radar-frame { grid-row: span 3; width: 140px; height: 140px; }
+  .pilot-mini-stats { align-self: end; }
+  .pilot-achievements > div { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pilot-achievements > div > span { justify-content: center; text-align: center; }
+  .arcade-layout { grid-template-columns: 1fr; }
+  .arcade-sidebar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .arcade-note { grid-column: 1 / -1; }
+}
+
+@media (max-width: 700px) {
+  .topbar.tl-header { height: auto; min-height: 62px; flex-wrap: wrap; justify-content: space-between; padding: 9px 12px 12px; }
+  .topbar.tl-header .brand-wordmark { font-size: 22px; }
+  .topbar.tl-header .brand-mark { width: 28px; height: 28px; }
+  .topbar-nav.tl-nav { order: 4; width: 100%; justify-content: space-between; margin: 0; }
+  .topbar-nav.tl-nav button { flex: 1; justify-content: center; min-height: 35px; padding: 7px 5px; font-size: 10px; }
+  .topbar-nav.tl-nav .tl-nav-label { display: inline; }
+  .sound-toggle { min-height: 34px; padding: 7px 9px; font-size: 9px; }
+  .reference-page { padding: 22px 14px 34px; }
+  .reference-page-heading { align-items: flex-start; flex-direction: column; }
+  .mission-control-actions { width: 100%; justify-content: flex-start; }
+  .mission-control-actions .reference-button { flex: 1; }
+  .pilot-dossier { grid-template-columns: minmax(115px, 135px) minmax(0, 1fr); padding: 15px; }
+  .pilot-radar-frame { width: 116px; height: 116px; }
+  .pilot-radar-profile > svg { width: 54px; height: 54px; }
+  .pilot-radar-profile > strong { font-size: 11px; }
+  .pilot-achievements > div { grid-template-columns: 1fr; }
+  .pilot-achievements > div > span { justify-content: flex-start; }
+  .reference-mission-card__header { grid-template-columns: 42px minmax(0, 1fr); }
+  .reference-mission-card__header .simulation-sticker { grid-column: 2; justify-self: start; }
+  .mission-level-emblem { width: 40px; height: 40px; font-size: 20px; }
+  .mission-selection__heading { align-items: flex-start; flex-direction: column; }
+  .challenge-card-grid { gap: 8px; }
+  .challenge-card { padding: 9px; }
+  .challenge-card strong { font-size: 13px; }
+  .arcade-sidebar { grid-template-columns: 1fr; }
+  .arcade-note { grid-column: auto; }
+  .reference-game-card { padding: 16px; }
+  .arcade-pattern-choices { gap: 7px; }
+  .arcade-schematic { height: 102px; }
+  .journal-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .journal-task-progress { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .journal-heading .reference-button { width: 100%; }
+  .journal-entry-heading { flex-direction: column; }
+  .journal-result-tag { justify-self: start; }
+  .shop-themes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .certificate-dialog { padding: 17px 10px; }
+  .certificate-paper { min-height: 440px; padding: 26px 15px; }
+}
+
+@media (max-width: 420px) {
+  .topbar-nav.tl-nav .tl-nav-label { display: none; }
+  .topbar-nav.tl-nav button { min-height: 34px; }
+  .challenge-card-grid { grid-template-columns: 1fr 1fr; }
+  .challenge-card__art { width: 34px; height: 34px; }
+  .challenge-card__art-ring { width: 25px; height: 25px; }
+  .memory-actions .memory-save { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-background::before,
+  .topbar.tl-header .brand-mark,
+  .pilot-radar-sweep,
+  .mission-hero-sweep,
+  .arcade-schematic__scan,
+  .reference-flame,
+  .speed-timer.is-low,
+  .welcome-screen::before {
+    animation: none !important;
+  }
+  .reference-page,
+  .reference-game-card,
+  .memory-note,
+  .challenge-card {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.reference-briefing-page,
+.reference-task-page { width: min(940px, 100%); }
+
+.reference-back {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 17px;
+  padding: 8px 13px;
+  color: #c9d8ed;
+  border: 2px solid rgba(115, 217, 255, 0.3);
+  border-radius: 22px;
+  background: rgba(5, 16, 46, 0.82);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font: 400 12px "Lilita One", sans-serif;
+  transition: color 140ms ease, transform 140ms ease, background 140ms ease;
+}
+.reference-back:hover:not(:disabled) { color: var(--reference-cream); background: rgba(23, 55, 102, 0.92); transform: translateY(-2px); }
+.reference-back:focus-visible { outline: 3px solid var(--reference-gold); outline-offset: 3px; }
+.reference-back:disabled { cursor: not-allowed; opacity: 0.55; }
+
+.reference-briefing-card {
+  display: grid;
+  gap: 20px;
+  padding: clamp(20px, 4vw, 36px);
+  border: 3px solid #79ddff;
+  border-radius: 29px;
+  background:
+    radial-gradient(ellipse at 2% 2%, rgba(0, 240, 255, 0.17), transparent 38%),
+    radial-gradient(ellipse at 100% 100%, rgba(157, 78, 221, 0.16), transparent 40%),
+    linear-gradient(155deg, rgba(18, 38, 84, 0.96), rgba(7, 13, 39, 0.97));
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.43), 0 0 35px rgba(0, 207, 255, 0.19);
+}
+.reference-briefing-card__header {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+}
+.reference-briefing-card__header h1 {
+  margin: 0;
+  color: var(--reference-cream);
+  font: 400 clamp(27px, 5vw, 43px)/1.08 "Bagel Fat One", sans-serif;
+  text-shadow: 0 3px 0 #2563eb, 0 5px 13px rgba(37, 99, 235, 0.42);
+}
+.reference-briefing-card__header p:last-child { margin: 7px 0 0; color: #b8c8dc; font-size: 13px; }
+.reference-briefing-card__header .reference-eyebrow { margin-bottom: 6px; }
+.reference-briefing-copy {
+  margin: 0;
+  padding: 15px 18px;
+  color: #e4ecf8;
+  border-left: 4px solid var(--reference-cyan);
+  border-radius: 0 13px 13px 0;
+  background: rgba(1, 8, 29, 0.45);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.reference-briefing-pilot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 15px;
+  border: 1px solid rgba(115, 217, 255, 0.25);
+  border-radius: 18px;
+  background: rgba(5, 15, 42, 0.57);
+}
+.reference-briefing-pilot > div { display: grid; gap: 4px; }
+.reference-briefing-pilot > div > span { color: #73d9ff; font: 700 10px "Chakra Petch", monospace; letter-spacing: 0.11em; }
+.reference-briefing-pilot strong { color: var(--reference-cream); font: 400 14px "Lilita One", sans-serif; }
+.reference-briefing-card .briefing-selected-task {
+  margin: 0;
+  padding: 17px 19px;
+  border: 2px solid var(--reference-gold);
+  border-radius: 19px;
+  background: linear-gradient(125deg, rgba(255, 209, 102, 0.13), rgba(255, 158, 37, 0.05));
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
+}
+.reference-briefing-card .briefing-selected-task h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 5px 0 0;
+  color: var(--reference-cream);
+  font: 400 20px/1.3 "Lilita One", sans-serif;
+}
+.reference-briefing-card .briefing-selected-task h2 > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #111a36;
+  border: 2px solid #fff0b0;
+  border-radius: 50%;
+  background: var(--reference-gold);
+  font: 400 16px "Lilita One", sans-serif;
+}
+.reference-briefing-card .replay-chip {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 6px 10px;
+  color: #ffecb3;
+  border: 1px solid rgba(255, 209, 102, 0.45);
+  border-radius: 13px;
+  background: rgba(255, 158, 37, 0.14);
+  font: 700 9px "Chakra Petch", monospace;
+  letter-spacing: 0.08em;
+}
+.briefing-objectives { display: grid; gap: 10px; }
+.briefing-objective-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.reference-briefing-card .briefing-objective {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 3px 10px;
+  min-height: 62px;
+  padding: 10px 12px;
+  border: 1px solid rgba(115, 217, 255, 0.24);
+  border-radius: 15px;
+  background: rgba(4, 13, 38, 0.67);
+}
+.reference-briefing-card .briefing-objective--selected { border: 2px solid var(--reference-cyan); background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 15px rgba(0, 240, 255, 0.12); }
+.reference-briefing-card .briefing-objective > span {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  grid-row: span 2;
+  place-items: center;
+  color: #071629;
+  border-radius: 50%;
+  background: #73d9ff;
+  font: 400 13px "Lilita One", sans-serif;
+}
+.reference-briefing-card .briefing-objective > strong { overflow: hidden; color: #e7effb; font: 600 11px/1.3 "Space Grotesk", sans-serif; text-overflow: ellipsis; }
+.reference-briefing-card .briefing-objective > small { color: #93a6c1; font: 700 8px "Chakra Petch", monospace; letter-spacing: 0.08em; }
+.reference-briefing-launch,
+.reference-task-submit { justify-self: stretch; min-height: 50px; font-size: 16px; }
+.reference-briefing-card .radar-fact-card {
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(157, 78, 221, 0.44);
+  border-radius: 17px;
+  background: linear-gradient(125deg, rgba(87, 43, 139, 0.2), rgba(6, 18, 48, 0.7));
+}
+
+.reference-task-card {
+  display: grid;
+  gap: 16px;
+  padding: clamp(19px, 4vw, 35px);
+  border: 3px solid var(--reference-cyan);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 0 0, rgba(0, 240, 255, 0.15), transparent 37%),
+    linear-gradient(150deg, rgba(13, 31, 72, 0.97), rgba(5, 11, 34, 0.98));
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 240, 255, 0.14);
+}
+.reference-task-card .task-card-topline { display: flex; flex-wrap: wrap; gap: 8px; color: #83dfff; font: 700 10px "Chakra Petch", monospace; letter-spacing: 0.1em; }
+.reference-task-card .task-card-topline > span:last-child { margin-left: auto; padding: 5px 9px; color: #14213d; border-radius: 12px; background: var(--reference-gold); letter-spacing: 0.04em; }
+.reference-task-card .task-simulation-label { width: fit-content; padding: 7px 11px; color: #d7efff; border: 1px solid rgba(115, 217, 255, 0.28); border-radius: 14px; background: rgba(14, 53, 91, 0.52); font: 700 9px "Chakra Petch", monospace; letter-spacing: 0.08em; }
+.reference-task-card h1 { margin: 0; color: var(--reference-cream); font: 400 clamp(25px, 4vw, 36px)/1.15 "Bagel Fat One", sans-serif; text-shadow: 0 3px 0 #2563eb; }
+.reference-task-card .task-prompt { margin: 0; color: #dce8f8; font-size: 15px; line-height: 1.65; }
+.reference-task-card .task-options { display: grid; gap: 9px; margin: 0; padding: 16px; border: 1px solid rgba(115, 217, 255, 0.24); border-radius: 19px; background: rgba(1, 8, 29, 0.35); }
+.reference-task-card .task-options legend { padding: 0 7px; color: #73d9ff; font: 700 10px "Chakra Petch", monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+.reference-task-card .task-option {
+  display: grid;
+  grid-template-columns: 19px 31px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 9px 12px;
+  color: #dce8f8;
+  border: 2px solid rgba(115, 217, 255, 0.2);
+  border-radius: 15px;
+  background: rgba(8, 23, 55, 0.82);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.45;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+.reference-task-card .task-option:hover { border-color: rgba(115, 217, 255, 0.64); transform: translateX(3px); }
+.reference-task-card .task-option--selected { border-color: var(--reference-gold); background: rgba(255, 209, 102, 0.11); box-shadow: 0 0 14px rgba(255, 209, 102, 0.13); }
+.reference-task-card .task-option input { accent-color: var(--reference-gold); }
+.reference-task-card .task-option-id { display: grid; width: 28px; height: 28px; place-items: center; color: #0a1831; border-radius: 50%; background: #86e8ff; font: 400 13px "Lilita One", sans-serif; }
+.reference-reveal-panel {
+  padding: clamp(22px, 4vw, 36px);
+  border: 3px solid var(--reference-gold);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 50% 0, rgba(255, 209, 102, 0.15), transparent 43%),
+    linear-gradient(150deg, rgba(19, 34, 75, 0.97), rgba(6, 12, 38, 0.98));
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.4), 0 0 28px rgba(255, 209, 102, 0.12);
+}
+.reference-reveal-panel h2 { color: var(--reference-cream); font: 400 clamp(26px, 4vw, 36px)/1.12 "Bagel Fat One", sans-serif; text-shadow: 0 3px 0 #2563eb; }
+.reference-reveal-panel .reveal-message { color: #dce8f8; line-height: 1.65; }
+.reference-reveal-panel .replay-result-note { padding: 12px 15px; color: #fff0c2; border: 1px solid rgba(255, 209, 102, 0.38); border-radius: 14px; background: rgba(255, 209, 102, 0.1); line-height: 1.5; }
+
+@media (max-width: 600px) {
+  .reference-briefing-card__header { grid-template-columns: 46px minmax(0, 1fr); gap: 11px; }
+  .reference-briefing-card__header .simulation-sticker { grid-column: 2; justify-self: start; }
+  .mission-level-emblem { width: 44px; height: 44px; }
+  .briefing-objective-grid { grid-template-columns: 1fr; }
+  .reference-briefing-pilot { align-items: flex-start; flex-direction: column; }
+}
+
+.mission-heading h1 {
+  color: var(--reference-cream);
+  font: 400 clamp(34px, 5vw, 52px)/1.05 "Bagel Fat One", sans-serif;
+  letter-spacing: 0.015em;
+  text-shadow: 0 4px 0 #2563eb, 0 8px 18px rgba(37, 99, 235, 0.35);
+}
+.mission-heading h1 span { color: #ff91bb; text-shadow: 0 4px 0 #9333a7, 0 0 20px rgba(255, 67, 101, 0.28); }
+.mission-index,
+.mission-type {
+  padding: 5px 10px;
+  border: 1px solid rgba(115, 217, 255, 0.32);
+  border-radius: 14px;
+  background: rgba(5, 18, 46, 0.68);
+  font: 700 9px "Chakra Petch", monospace;
+  letter-spacing: 0.09em;
+}
+.mission-index { color: #081329; border-color: #ffe68c; background: var(--reference-amber); }
+.section-heading h2 { color: var(--reference-cream); font: 400 22px "Lilita One", sans-serif; }
+.observation-card,
+.observation-context {
+  min-width: 0;
+  border: 2px solid rgba(115, 217, 255, 0.28);
+  border-radius: 19px;
+  background:
+    radial-gradient(ellipse at 100% 0, rgba(0, 240, 255, 0.12), transparent 60%),
+    linear-gradient(145deg, rgba(13, 30, 71, 0.96), rgba(7, 13, 37, 0.94));
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.25);
+}
+.observation-card:has(.observation-dot--before) { border-color: rgba(115, 217, 255, 0.53); }
+.observation-card:has(.observation-dot--after) { border-color: rgba(255, 209, 102, 0.53); }
+.observation-heading { color: var(--reference-cream); font-family: "Lilita One", sans-serif; }
+.observation-detail { color: #f0d48b; font-weight: 700; }
+.observation-id { opacity: 0.72; }
+.observation-context { border-color: rgba(157, 78, 221, 0.48); }
+.observation-context strong { color: var(--reference-cream); font-family: "Lilita One", sans-serif; }
+.context-icon { border-radius: 13px; background: rgba(0, 240, 255, 0.12); }
+.map-source-tag,
+.evidence-result-tag {
+  min-height: 31px;
+  padding: 7px 11px;
+  color: #c8f7ff;
+  border: 1px solid rgba(115, 217, 255, 0.4);
+  border-radius: 18px;
+  background: rgba(6, 20, 52, 0.9);
+  font: 700 9px "Chakra Petch", monospace;
+  letter-spacing: 0.08em;
+}
+.map-frame {
+  overflow: hidden;
+  border: 3px solid #65d9ff;
+  border-radius: 24px;
+  background: #070d21;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.38), 0 0 30px rgba(0, 240, 255, 0.14);
+}
+.map-layer-toggle {
+  border-width: 2px;
+  border-color: #b7f4ff;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(16, 44, 87, 0.97), rgba(5, 14, 42, 0.97));
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 240, 255, 0.12);
+  font: 400 12px "Lilita One", sans-serif;
+}
+.evidence-panel,
+.method-panel {
+  border-width: 3px;
+  border-radius: 23px;
+  background:
+    radial-gradient(ellipse at 100% 0, rgba(157, 78, 221, 0.18), transparent 54%),
+    linear-gradient(150deg, rgba(12, 27, 67, 0.97), rgba(6, 12, 36, 0.98));
+  box-shadow: 0 7px 0 rgba(0, 0, 0, 0.32), 0 0 22px rgba(0, 240, 255, 0.08);
+}
+.evidence-panel { border-color: rgba(0, 240, 255, 0.57); }
+.method-panel { border-color: rgba(157, 78, 221, 0.54); }
+.evidence-heading h3,
+.panel-title h2 { color: var(--reference-cream); font: 400 21px "Lilita One", sans-serif; }
+.evidence-caveat {
+  border: 2px solid rgba(255, 209, 102, 0.4);
+  border-radius: 16px;
+  background: rgba(255, 158, 37, 0.1);
+}
+.evidence-caveat strong { color: #ffe39a; font-family: "Lilita One", sans-serif; }
+.method-steps li { border-bottom-color: rgba(115, 217, 255, 0.13); }
+.steps-heading { color: #a4d9ee; font-family: "Chakra Petch", monospace; }
+.workspace-footer {
+  border-top: 1px solid rgba(115, 217, 255, 0.2);
+  color: #96b5cc;
+  font: 700 9px "Chakra Petch", monospace;
+  letter-spacing: 0.07em;
+}
+
+.mission-pilot-page { width: min(1120px, 100%); }
+.mission-pilot-page .reference-page-heading { margin-bottom: 18px; }
+.avatar-editor-shell { width: 100%; }
+.avatar-editor-card {
+  display: grid;
+  width: 100%;
+  max-width: 1080px;
+  grid-template-columns: minmax(210px, 270px) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(18px, 3vw, 30px);
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 30px);
+  border: 2px solid rgba(115, 217, 255, 0.32);
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 0 0, rgba(157, 78, 221, 0.16), transparent 58%),
+    linear-gradient(145deg, rgba(12, 27, 67, 0.97), rgba(6, 12, 36, 0.98));
+}
+.avatar-editor-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  padding: 22px 14px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.12), rgba(5, 15, 44, 0.58) 72%);
+}
+.avatar-editor-portrait { padding: 8px; border: 3px dashed rgba(0, 240, 255, 0.5); border-radius: 50%; }
+.avatar-editor-preview__label { color: var(--reference-cream); font-size: 15px; }
+.avatar-editor-random {
+  padding: 7px 14px;
+  color: var(--reference-cyan);
+  border: 2px solid var(--reference-cyan);
+  border-radius: 16px;
+  background: rgba(0, 240, 255, 0.1);
+  cursor: pointer;
+  font: 400 14px "Lilita One", sans-serif;
+}
+.avatar-editor-options { display: grid; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 22px; }
+.avatar-editor-field { display: flex; min-width: 0; flex-direction: column; gap: 8px; }
+.avatar-editor-field:first-child,
+.avatar-editor-actions,
+.avatar-save-message { grid-column: 1 / -1; }
+.avatar-editor-label { color: var(--reference-cream); font: 400 13px "Lilita One", sans-serif; letter-spacing: 1px; }
+.avatar-editor-callsign {
+  width: 100%;
+  padding: 9px 12px;
+  color: #f8fafc;
+  border: 2px solid #475569;
+  border-radius: 12px;
+  outline: none;
+  background: rgba(15, 23, 42, 0.85);
+  font: 14px "Space Grotesk", sans-serif;
+}
+.avatar-editor-callsign:focus-visible,
+.avatar-editor-random:focus-visible,
+.avatar-editor-pilot-types button:focus-visible,
+.avatar-editor-options button:focus-visible {
+  outline: 2px solid var(--reference-gold);
+  outline-offset: 3px;
+}
+.avatar-editor-pilot-types { display: flex; gap: 8px; }
+.avatar-editor-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
+.avatar-editor-save { flex: 1; min-height: 42px; padding: 8px; cursor: pointer; }
+.avatar-editor-cancel {
+  padding: 8px 18px;
+  color: #cbd5e1;
+  border: 2px solid #475569;
+  border-radius: 28px;
+  background: transparent;
+  cursor: pointer;
+  font: 400 14px "Lilita One", sans-serif;
+}
+.avatar-save-message { margin: 0; }
+.avatar-save-message--success { color: #9ff7c8; border-color: rgba(115, 255, 190, 0.4); background: rgba(15, 118, 110, 0.2); }
+
+@media (min-width: 701px) and (max-width: 900px) {
+  .topbar.tl-header { gap: 8px; padding-inline: 10px; }
+  .topbar-nav.tl-nav { gap: 2px; padding: 3px; }
+  .topbar-nav.tl-nav button { gap: 4px; padding-inline: 5px; }
+}
+
+@media (max-width: 700px) {
+  .topbar-nav.tl-nav button { min-width: 0; }
+  .topbar-nav.tl-nav .tl-nav-label { white-space: normal; text-align: center; line-height: 1.05; }
+  .avatar-editor-card { grid-template-columns: minmax(0, 1fr); }
+  .avatar-editor-preview { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .avatar-editor-preview__label { flex-basis: 100%; text-align: center; }
+}
+
+@media (max-width: 420px) {
+  .avatar-editor-options { grid-template-columns: minmax(0, 1fr); }
+  .avatar-editor-field:first-child,
+  .avatar-editor-actions,
+  .avatar-save-message { grid-column: auto; }
+  .avatar-editor-preview { flex-direction: column; }
+}
+.arcade-storage-message {
+  padding: 11px 14px;
+  color: #ffe4e6;
+  border: 1px solid rgba(255, 67, 101, 0.48);
+  border-radius: 13px;
+  background: rgba(127, 29, 29, 0.28);
+}
+.avatar-save-message {
+  margin: 0;
+  padding: 10px 12px;
+  color: #ffe4e6;
+  border: 1px solid rgba(255, 67, 101, 0.48);
+  border-radius: 12px;
+  background: rgba(127, 29, 29, 0.28);
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reference-back,
+  .reference-task-card .task-option,
+  .welcome-copy,
+  .welcome-title__brand > span,
+  .welcome-screen--launching,
+  .welcome-radar-sweep,
+  .welcome-signal {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media print {
+  @page { size: landscape; margin: 0; }
+  html, body, #root, .app-shell { width: 100%; min-height: 0; height: auto; overflow: visible !important; background: #fff !important; }
+  body * { visibility: hidden !important; }
+  .certificate-overlay { position: static; display: block; overflow: visible; padding: 0; background: transparent; backdrop-filter: none; }
+  .certificate-paper--print,
+  .certificate-paper--print * { visibility: visible !important; }
+  .certificate-paper--print { position: fixed; inset: 0; display: grid; width: 100vw; height: 100vh; min-height: 0; padding: 24mm; border-width: 9px; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .certificate-paper--print .certificate-paper__content { transform: scale(1.05); }
+}

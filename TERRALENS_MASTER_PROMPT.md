@@ -32,13 +32,13 @@ However:
 Before implementation, read:
 
 1. `TERRALENS_MASTER_PROMPT.md`
-2. `docs/reference/TERRALENS.pdf`
+2. `docs/reference/TERRALENS.md`
 3. `.github/copilot-instructions.md`
 4. `Memory.md`, if it exists
 5. `Phases.md`, if it exists
 6. Relevant architecture and implementation documents
 
-The master prompt and PDF define the project vision, features, scientific requirements, and development workflow.
+The master prompt and reference Markdown define the project vision, features, scientific requirements, and development workflow.
 
 Existing source code and verified implementation define what actually works.
 
@@ -453,7 +453,7 @@ First:
 
 1. Inspect the repository structure.
 2. Read `TERRALENS_MASTER_PROMPT.md` completely.
-3. Read `docs/reference/TERRALENS.pdf` completely.
+3. Read `docs/reference/TERRALENS.md` completely.
 4. Read `.github/copilot-instructions.md`.
 5. Inspect Git status and existing files.
 6. Determine whether Phase 1 has already been completed.

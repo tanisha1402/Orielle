@@ -1,0 +1,9 @@
+hyp3_sdk==7.7.8
+rasterio
+numpy
+requests
+scipy
+fastapi
+uvicorn
+pillow
+httpx
