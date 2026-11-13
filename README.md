@@ -546,6 +546,7 @@ git status --short
 
 ---
 
+
 ## Repository Structure
 
 ```text
@@ -570,13 +571,19 @@ git status --short
 ├── tests/
 │
 ├── docs/
-│   ├── images/
-│   └── reference/
-│       └── TERRALENS.md
+│   └── images/
+│       ├── welcome-screen.png
+│       ├── sar-lab.png
+│       ├── water-change.png
+│       ├── mission-control.png
+│       ├── mission-pilot.png
+│       ├── arcade.png
+│       └── research-journal.png
 │
 ├── requirements-data.txt
 └── README.md
 ```
+
 
 ---
 
