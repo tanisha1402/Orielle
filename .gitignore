@@ -1,0 +1,8 @@
+.venv/
+/cache/sar/
+/cache/outputs/
+/cache/gamification.sqlite3
+__pycache__/
+*.py[cod]
+/.netrc
+/_netrc
