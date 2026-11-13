@@ -35,7 +35,7 @@ export function Reveal({
   return (
     <section
       aria-live="polite"
-      className={`reveal-panel ${success ? "reveal-panel--success" : "reveal-panel--learning"}`}
+      className={`reveal-panel reference-reveal-panel ${success ? "reveal-panel--success" : "reveal-panel--learning"}`}
     >
       {success && xpAwarded > 0 && <Confetti />}
       <div className="reveal-visual">
@@ -72,7 +72,7 @@ export function Reveal({
         </div>
       )}
       <button
-        className="game-button game-button--primary"
+        className="reference-button reference-button--gold"
         onClick={() => {
           sound.playKeyClick();
           onContinue();

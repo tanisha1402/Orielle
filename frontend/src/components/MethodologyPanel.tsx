@@ -1,5 +1,4 @@
 import {
-  AlertTriangle,
   ListChecks,
   Ruler,
   SlidersHorizontal,
@@ -71,14 +70,6 @@ export function MethodologyPanel({ analysis }: MethodologyPanelProps) {
         Connected-component minimum: {minComponentPixels} pixel
         {minComponentPixels === 1 ? "" : "s"} (8-neighbour connectivity).
       </p>
-
-      <div className="uncertainty-note" role="note">
-        <AlertTriangle aria-hidden="true" size={17} />
-        <div>
-          <strong>Interpret with care</strong>
-          <p>{PROCESSING_DEFAULTS.uncertainty}</p>
-        </div>
-      </div>
 
       <div className="sensor-note">
         <span className="sensor-indicator" />

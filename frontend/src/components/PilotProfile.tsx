@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Edit3 } from "lucide-react";
 import {
   AvatarEditor,
@@ -8,11 +8,15 @@ import {
   type AvatarConfig,
 } from "./Avatar";
 import { sound } from "../utils/audio";
+import {
+  LOCAL_GAME_STATE_EVENT,
+  loadLocalGameState,
+} from "../gamification/localGameState";
 
-const CALLSIGN_STORAGE_KEY = "terralens.pilot.callsign";
+export const CALLSIGN_STORAGE_KEY = "terralens.pilot.callsign";
 const DEFAULT_CALLSIGN = "Jamuna Explorer";
 
-function loadCallsign(): string {
+export function loadPilotCallsign(): string {
   try {
     return window.localStorage.getItem(CALLSIGN_STORAGE_KEY) || DEFAULT_CALLSIGN;
   } catch {
@@ -22,20 +26,36 @@ function loadCallsign(): string {
 
 export function PilotProfile({ compact = false }: { compact?: boolean }) {
   const [avatar, setAvatar] = useState<AvatarConfig>(loadAvatar);
-  const [callsign, setCallsign] = useState(loadCallsign);
+  const [callsign, setCallsign] = useState(loadPilotCallsign);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [theme, setTheme] = useState(() => loadLocalGameState().activeTheme);
 
-  const saveProfile = (nextAvatar: AvatarConfig, nextCallsign: string) => {
-    saveAvatar(nextAvatar);
+  useEffect(() => {
+    const refreshTheme = () => setTheme(loadLocalGameState().activeTheme);
+    window.addEventListener(LOCAL_GAME_STATE_EVENT, refreshTheme);
+    window.addEventListener("storage", refreshTheme);
+    return () => {
+      window.removeEventListener(LOCAL_GAME_STATE_EVENT, refreshTheme);
+      window.removeEventListener("storage", refreshTheme);
+    };
+  }, []);
+
+  const saveProfile = (nextAvatar: AvatarConfig, nextCallsign: string): boolean => {
+    const avatarSaved = saveAvatar(nextAvatar);
+    let callsignSaved = true;
     try {
       window.localStorage.setItem(CALLSIGN_STORAGE_KEY, nextCallsign);
     } catch {
-      // The saved look remains available for the current session.
+      callsignSaved = false;
     }
     setAvatar(nextAvatar);
     setCallsign(nextCallsign);
+    if (!avatarSaved || !callsignSaved) {
+      return false;
+    }
     setEditorOpen(false);
     sound.playSuccessChime();
+    return true;
   };
 
   return (
@@ -44,13 +64,16 @@ export function PilotProfile({ compact = false }: { compact?: boolean }) {
         aria-haspopup="dialog"
         aria-label={`Customize pilot ${callsign}`}
         className={`pilot-profile${compact ? " pilot-profile--compact" : ""}`}
+        data-theme={theme}
         onClick={() => {
           sound.playKeyClick();
           setEditorOpen(true);
         }}
         type="button"
       >
-        <PilotAvatar cfg={avatar} ring size={compact ? 46 : 68} />
+        <span className="pilot-avatar-frame">
+          <PilotAvatar cfg={avatar} ring size={compact ? 46 : 68} />
+        </span>
         <span className="pilot-profile-copy">
           <span>MISSION PILOT</span>
           <strong>{callsign}</strong>

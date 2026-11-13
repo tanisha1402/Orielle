@@ -20,9 +20,9 @@ export function MissionBriefing({
   onBegin,
 }: MissionBriefingProps) {
   return (
-    <div className="game-page game-page--narrow">
+    <main className="game-page game-page--narrow reference-page reference-briefing-page">
       <button
-        className="game-back-button"
+        className="reference-back"
         onClick={() => {
           sound.playKeyClick();
           onBack();
@@ -32,55 +32,58 @@ export function MissionBriefing({
         <ArrowLeft aria-hidden="true" size={15} />
         Mission Control
       </button>
-      <section className="briefing-card">
-        <div className="briefing-mark" aria-hidden="true">
-          <Target size={23} />
+      <section className="reference-briefing-card">
+        <div className="reference-briefing-card__header">
+          <div className="mission-level-emblem" aria-hidden="true">
+            <Target size={24} />
+          </div>
+          <div>
+            <p className="reference-eyebrow">LEVEL {mission.level} · RADAR ROOKIE</p>
+            <h1>{mission.title}</h1>
+            <p>{mission.tagline}</p>
+          </div>
+          <span className="simulation-sticker">TRAINING SIM</span>
         </div>
-        <p className="eyebrow">LEVEL {mission.level} · TRAINING SIMULATION</p>
-        <h1>{mission.title}</h1>
-        <p className="briefing-tagline">{mission.tagline}</p>
-        <p className="briefing-copy">{mission.briefing}</p>
-        <PilotProfile compact />
+        <p className="reference-briefing-copy">{mission.briefing}</p>
+        <div className="reference-briefing-pilot">
+          <PilotProfile compact />
+          <span>YOUR PILOT IS READY</span>
+        </div>
         <div className="briefing-selected-task">
-          <span>CHALLENGE {task.id}</span>
-          <h2>{task.title}</h2>
+          <span className="reference-eyebrow">SELECTED CHALLENGE {task.id}</span>
+          <h2><span>{task.id}</span>{task.title}</h2>
           {replay && (
             <strong className="replay-chip">
-              REPLAY MODE · NO ADDITIONAL XP
+              REPLAY · REWARDS ALREADY EARNED
             </strong>
           )}
         </div>
         <div className="briefing-objectives">
-          <span className="game-overline">MISSION OBJECTIVES</span>
-          {mission.tasks.map((objective) => (
-            <div
-              className={`briefing-objective${objective.id === task.id ? " briefing-objective--selected" : ""}`}
-              key={objective.id}
-            >
-              <span>{objective.id}</span>
-              <strong>{objective.title}</strong>
-              <small>
-                {!objective.released
-                  ? "COMING SOON"
-                  : objective.unlocked
-                    ? objective.id === task.id
-                      ? "UNLOCKED"
-                      : "AVAILABLE"
-                    : "LOCKED · FINISH PRIOR TASK"}
-              </small>
-            </div>
-          ))}
-        </div>
-        <div className="training-disclaimer">
-          <strong>Training data only</strong>
-          <p>
-            This mission teaches concepts with synthetic examples. It does not
-            contain satellite observations or claim a flood finding.
-          </p>
+          <span className="reference-eyebrow">MISSION CHALLENGES</span>
+          <div className="briefing-objective-grid">
+            {mission.tasks.map((objective) => (
+              <div
+                className={`briefing-objective${objective.id === task.id ? " briefing-objective--selected" : ""}`}
+                key={objective.id}
+              >
+                <span>{objective.id}</span>
+                <strong>{objective.title}</strong>
+                <small>
+                  {!objective.released
+                    ? "COMING SOON"
+                    : objective.unlocked
+                      ? objective.id === task.id
+                        ? "SELECTED"
+                        : "READY"
+                      : "LOCKED"}
+                </small>
+              </div>
+            ))}
+          </div>
         </div>
         <RadarFactCard />
         <button
-          className="game-button game-button--primary game-button--wide"
+          className="reference-button reference-button--gold reference-briefing-launch"
           disabled={!task.released || !task.unlocked}
           onClick={() => {
             sound.playLaunchFanfare();
@@ -92,6 +95,6 @@ export function MissionBriefing({
           <ArrowRight aria-hidden="true" size={16} />
         </button>
       </section>
-    </div>
+    </main>
   );
 }

@@ -4,7 +4,6 @@ import {
   Compass,
   Radar,
   Satellite,
-  Waves,
 } from "lucide-react";
 import { SoundToggle } from "./SoundToggle";
 import { PilotProfile } from "./PilotProfile";
@@ -105,10 +104,6 @@ export function WelcomeScreen({
             </button>
           </div>
 
-          <p className="welcome-integrity-note">
-            <Waves aria-hidden="true" size={14} />
-            Training simulations are separate from satellite-derived results.
-          </p>
           <PilotProfile />
         </div>
 
@@ -131,7 +126,6 @@ export function WelcomeScreen({
 
       <footer className="welcome-footer">
         <span>FIELD SITE 01 / JAMUNA RIVER</span>
-        <span>Observed water change is not confirmed flood extent.</span>
       </footer>
     </main>
   );

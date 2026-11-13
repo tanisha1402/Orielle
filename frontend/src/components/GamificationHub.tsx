@@ -18,11 +18,27 @@ import { MissionControl } from "./MissionControl";
 import { ResearchJournal } from "./ResearchJournal";
 import { Reveal } from "./Reveal";
 import { TaskRunner } from "./TaskRunner";
+import { ArcadeHub } from "./ArcadeHub";
 import { playRankUp, sound } from "../utils/audio";
+import { loadPilotCallsign } from "./PilotProfile";
 
-type Screen = "control" | "briefing" | "task" | "reveal" | "journal";
+export type GamificationScreen =
+  | "control"
+  | "briefing"
+  | "task"
+  | "reveal"
+  | "journal"
+  | "arcade";
 
-export function GamificationHub() {
+interface GamificationHubProps {
+  initialScreen?: GamificationScreen;
+  onScreenChange?: (screen: GamificationScreen) => void;
+}
+
+export function GamificationHub({
+  initialScreen = "control",
+  onScreenChange,
+}: GamificationHubProps) {
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [missions, setMissions] = useState<Mission[]>([]);
   const [progress, setProgress] = useState<PlayerProgress | null>(null);
@@ -32,11 +48,20 @@ export function GamificationHub() {
   const [rankUp, setRankUp] = useState<string | null>(null);
   const [developmentResetEnabled, setDevelopmentResetEnabled] = useState(false);
   const [isReplay, setIsReplay] = useState(false);
-  const [screen, setScreen] = useState<Screen>("control");
+  const [screen, setScreenState] = useState<GamificationScreen>(initialScreen);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+
+  const setScreen = (next: GamificationScreen) => {
+    setScreenState(next);
+    onScreenChange?.(next);
+  };
+
+  useEffect(() => {
+    setScreenState(initialScreen);
+  }, [initialScreen]);
 
   useEffect(() => {
     let active = true;
@@ -276,18 +301,18 @@ export function GamificationHub() {
             }}
           >
             <strong>Correct training answer: {answerResult.correct_answer}</strong>
-            <span>
-              This reveal is a learning aid, not a result from satellite data.
-            </span>
           </Reveal>
         </div>
       )}
       {screen === "journal" && (
         <ResearchJournal
           entries={journal}
+          callsign={loadPilotCallsign()}
+          progress={progress}
           onBack={() => setScreen("control")}
         />
       )}
+      {screen === "arcade" && <ArcadeHub />}
     </div>
   );
 }

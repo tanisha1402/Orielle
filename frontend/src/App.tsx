@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
+  BookOpen,
   Compass,
   Database,
+  Gamepad2,
   Info,
   Radio,
   Satellite,
@@ -10,6 +12,7 @@ import {
 } from "lucide-react";
 import { MapView } from "./components/MapView";
 import { GamificationHub } from "./components/GamificationHub";
+import type { GamificationScreen } from "./components/GamificationHub";
 import { CosmicBackground } from "./components/CosmicBackground";
 import { EvidencePanel } from "./components/EvidencePanel";
 import { MethodologyPanel } from "./components/MethodologyPanel";
@@ -35,7 +38,7 @@ import {
 
 export default function App() {
   const [activeWorkspace, setActiveWorkspace] = useState<
-    "welcome" | "dashboard" | "training"
+    "welcome" | "dashboard" | "training" | "journal" | "arcade"
   >("welcome");
   const [scenePair, setScenePair] =
     useState<ScenePairMetadata>(INITIAL_SCENE_PAIR);
@@ -133,7 +136,7 @@ export default function App() {
         />
       ) : (
         <>
-      <header className="topbar">
+      <header className="topbar tl-header">
         <a
           aria-label="TERRALENS home"
           className="brand"
@@ -155,27 +158,27 @@ export default function App() {
           <span className="context-slash">/</span>
           <span>JAMUNA RIVER</span>
         </div>
-        <nav aria-label="Workspace" className="topbar-nav">
-          <button
-            aria-current={activeWorkspace === "dashboard" ? "page" : undefined}
-            className={activeWorkspace === "dashboard" ? "active" : ""}
-            onClick={() => {
-              sound.playKeyClick();
-              setActiveWorkspace("dashboard");
-            }}
-          >
-            SAR Dashboard
-          </button>
-          <button
-            aria-current={activeWorkspace === "training" ? "page" : undefined}
-            className={activeWorkspace === "training" ? "active" : ""}
-            onClick={() => {
-              sound.playKeyClick();
-              setActiveWorkspace("training");
-            }}
-          >
-            Mission Control
-          </button>
+        <nav aria-label="Workspace" className="topbar-nav tl-nav">
+          {([
+            { id: "dashboard", label: "SAR Lab", icon: <Compass aria-hidden="true" size={15} /> },
+            { id: "training", label: "Missions", icon: <Satellite aria-hidden="true" size={15} /> },
+            { id: "journal", label: "Journal", icon: <BookOpen aria-hidden="true" size={15} /> },
+            { id: "arcade", label: "Arcade", icon: <Gamepad2 aria-hidden="true" size={15} /> },
+          ] as const).map((item) => (
+            <button
+              aria-current={activeWorkspace === item.id ? "page" : undefined}
+              className={`tl-nav-btn${activeWorkspace === item.id ? " is-active" : ""}`}
+              key={item.id}
+              onClick={() => {
+                sound.playKeyClick();
+                setActiveWorkspace(item.id);
+              }}
+              type="button"
+            >
+              {item.icon}
+              <span className="tl-nav-label">{item.label}</span>
+            </button>
+          ))}
         </nav>
         <SoundToggle enabled={soundEnabled} onChange={setSoundEnabled} />
         <div className="topbar-status">
@@ -185,8 +188,27 @@ export default function App() {
       </header>
 
       <main className="workspace" id="top">
-        {activeWorkspace === "training" ? (
-          <GamificationHub />
+        {activeWorkspace === "training" ||
+        activeWorkspace === "journal" ||
+        activeWorkspace === "arcade" ? (
+          <GamificationHub
+            initialScreen={
+              activeWorkspace === "journal"
+                ? "journal"
+                : activeWorkspace === "arcade"
+                  ? "arcade"
+                  : "control"
+            }
+            onScreenChange={(screen: GamificationScreen) => {
+              setActiveWorkspace(
+                screen === "journal"
+                  ? "journal"
+                  : screen === "arcade"
+                    ? "arcade"
+                    : "training",
+              );
+            }}
+          />
         ) : (
           <>
         <section className="mission-heading" id="investigation">
@@ -282,7 +304,7 @@ export default function App() {
                     ? "LOCAL BACKEND UNAVAILABLE"
                     : "CHECKING LOCAL SAR OUTPUTS"}
           </span>
-          <span>Observed change is not a confirmed flood extent.</span>
+          <span>Jamuna River · Sentinel-1 RTC investigation</span>
         </footer>
           </>
         )}

@@ -21,9 +21,9 @@ export function TaskRunner({
   const [selected, setSelected] = useState("");
 
   return (
-    <div className="game-page game-page--narrow">
+    <main className="game-page game-page--narrow reference-page reference-task-page">
       <button
-        className="game-back-button"
+        className="reference-back"
         disabled={busy}
         onClick={() => {
           sound.playKeyClick();
@@ -34,16 +34,16 @@ export function TaskRunner({
         <ArrowLeft aria-hidden="true" size={15} />
         Mission briefing
       </button>
-      <section className="task-card">
+      <section className="task-card reference-task-card">
         <div className="task-card-topline">
           <span>RADAR ROOKIE · TASK {task.id}</span>
-          <span>{replay ? "REPLAY · NO XP" : `${task.xp} XP`}</span>
+          <span>{replay ? "REPLAY" : `+${task.xp} XP`}</span>
         </div>
         <div className="task-simulation-label">
           <Radio aria-hidden="true" size={14} />
           {replay
-            ? "REPLAY MODE · NO ADDITIONAL XP OR JOURNAL ENTRY"
-            : "SIMULATED TRAINING EXERCISE · NO REAL SAR DATA"}
+            ? "REPLAY MODE · REWARDS ALREADY EARNED"
+            : "RADAR CONCEPT SIMULATION"}
         </div>
         <h1>{task.title}</h1>
         <p className="task-prompt">{task.prompt}</p>
@@ -68,7 +68,7 @@ export function TaskRunner({
           ))}
         </fieldset>
         <button
-          className="game-button game-button--primary game-button--wide"
+          className="reference-button reference-button--gold reference-task-submit"
           disabled={!selected || busy}
           onClick={() => {
             sound.playKeyClick();
@@ -80,6 +80,6 @@ export function TaskRunner({
           {!busy && <ArrowRight aria-hidden="true" size={16} />}
         </button>
       </section>
-    </div>
+    </main>
   );
 }

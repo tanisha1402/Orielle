@@ -20,7 +20,14 @@ export function loadAvatar(): AvatarConfig {
   } catch { /* storage blocked */ }
   return DEFAULT_AVATAR;
 }
-export function saveAvatar(a: AvatarConfig) { try { window.localStorage.setItem(AVATAR_KEY, JSON.stringify(a)); } catch { /* blocked */ } }
+export function saveAvatar(a: AvatarConfig): boolean {
+  try {
+    window.localStorage.setItem(AVATAR_KEY, JSON.stringify(a));
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 const SKINS = ['#f8d9c0', '#f0cbb0', '#e0ac85', '#c68863', '#8d5a3c', '#5c3a26'];
 const HAIR_COLORS = ['#243447', '#6b3f1f', '#c9922b', '#d94f4f', '#7c3aed', '#e5e7eb'];
@@ -160,10 +167,11 @@ const Chips: React.FC<{ items: readonly string[]; value: number; onPick: (i: num
 
 export const AvatarEditor: React.FC<{
   initial: AvatarConfig; callsign: string;
-  onSave: (cfg: AvatarConfig, callsign: string) => void; onClose: () => void;
+  onSave: (cfg: AvatarConfig, callsign: string) => boolean; onClose: () => void;
 }> = ({ initial, callsign, onSave, onClose }) => {
   const [cfg, setCfg] = useState<AvatarConfig>(initial);
   const [name, setName] = useState<string>(callsign);
+  const [saveError, setSaveError] = useState("");
   const dialogRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -249,10 +257,15 @@ export const AvatarEditor: React.FC<{
           <div style={sec}><span style={lab}>GEAR</span><Chips items={GEARS} value={cfg.gear} onPick={i => set({ gear: i })} /></div>
           <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
             <button type="button" className="tl-btn3d" style={{ flex: 1, padding: '8px', cursor: 'pointer' }}
-              onClick={() => onSave(cfg, name.trim() || callsign)}>SAVE LOOK</button>
+              onClick={() => {
+                if (!onSave(cfg, name.trim() || callsign)) {
+                  setSaveError("Your look is active for this session, but could not be saved in this browser.");
+                }
+              }}>SAVE LOOK</button>
             <button type="button" onClick={onClose}
               style={{ padding: '8px 18px', borderRadius: '28px', border: '3px solid #475569', background: 'transparent', color: '#cbd5e1', fontFamily: "'Lilita One', sans-serif", fontSize: '16px', cursor: 'pointer' }}>CANCEL</button>
           </div>
+          {saveError && <p className="avatar-save-message" role="alert">{saveError}</p>}
         </div>
       </div>
     </div>
